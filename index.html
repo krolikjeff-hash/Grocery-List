@@ -1,0 +1,975 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Shopping List</title>
+<meta name="theme-color" content="#2f5f42">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Shopping List">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style id="style-tag">:root {
+  --bg: #f2f4ec;
+  --surface: #ffffff;
+  --surface-2: #eaeee0;
+  --ink: #1e2a1e;
+  --muted: #5b6558;
+  --border: #dbe1cf;
+  --primary: #2f5f42;
+  --primary-ink: #ffffff;
+  --accent: #e2532b;
+  --accent-ink: #ffffff;
+  --good: #2f5f42;
+  --shadow: 0 1px 2px rgba(30, 42, 30, 0.06), 0 6px 16px -8px rgba(30, 42, 30, 0.18);
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #131d16;
+    --surface: #1b2720;
+    --surface-2: #223028;
+    --ink: #eaf1e6;
+    --muted: #9bb09d;
+    --border: #2b3a30;
+    --primary: #7fc08e;
+    --primary-ink: #0e1a10;
+    --accent: #ff7d52;
+    --accent-ink: #241006;
+    --good: #7fc08e;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 20px -8px rgba(0, 0, 0, 0.5);
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #131d16;
+  --surface: #1b2720;
+  --surface-2: #223028;
+  --ink: #eaf1e6;
+  --muted: #9bb09d;
+  --border: #2b3a30;
+  --primary: #7fc08e;
+  --primary-ink: #0e1a10;
+  --accent: #ff7d52;
+  --accent-ink: #241006;
+  --good: #7fc08e;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 20px -8px rgba(0, 0, 0, 0.5);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+body {
+  font-family: "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 16px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: 96px;
+}
+
+.wrap {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+header.top {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 16px 12px;
+}
+
+header.top .inner {
+  max-width: 640px;
+  margin: 0 auto;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+h1.brand {
+  font-family: "Fraunces", Georgia, serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-size: 22px;
+  margin: 0;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+h1.brand span {
+  color: var(--primary);
+}
+
+.count-pill {
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+section { margin-top: 28px; }
+
+.section-head-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.collapse-toggle {
+  flex: none;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 12.5px;
+  color: var(--primary);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 6px 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  margin-top: 2px;
+}
+
+h2.section-title {
+  font-family: "Fraunces", Georgia, serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-size: 19px;
+  margin: 0 0 4px;
+  letter-spacing: -0.005em;
+}
+
+p.section-sub {
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-size: 13.5px;
+}
+
+.list-section {
+  margin-top: 32px;
+  margin-left: -16px;
+  margin-right: -16px;
+}
+
+.list-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--primary);
+  color: var(--primary-ink);
+  padding: 14px 16px;
+  border-radius: 14px 14px 0 0;
+  font-family: "Fraunces", Georgia, serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-size: 20px;
+  letter-spacing: -0.005em;
+}
+
+.list-banner-icon { font-size: 21px; }
+
+.list-panel {
+  background: color-mix(in srgb, var(--primary) 6%, var(--surface));
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 14px 14px;
+  padding: 14px 16px 18px;
+}
+
+.list-panel p.section-sub { margin-top: -2px; }
+
+.recipe-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.recipe-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.recipe-row input[type="checkbox"] {
+  width: 22px;
+  height: 22px;
+  flex: none;
+  accent-color: var(--primary);
+}
+
+.recipe-row .meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.recipe-row .name {
+  font-weight: 600;
+  font-size: 15.5px;
+  color: var(--ink);
+}
+
+.recipe-row .time {
+  font-size: 12.5px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  margin-top: 1px;
+}
+
+.recipe-row.selected {
+  border-color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 8%, var(--surface));
+}
+
+.cat-group { margin-bottom: 18px; }
+
+.cat-group h3 {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin: 0 0 8px;
+}
+
+.item-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px;
+  border-bottom: 1px solid var(--border);
+}
+
+.item-row:last-child { border-bottom: none; }
+
+.item-row .tap-area {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 9px 4px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.item-row input[type="checkbox"] {
+  width: 21px;
+  height: 21px;
+  flex: none;
+  margin-top: 2px;
+  accent-color: var(--primary);
+}
+
+.item-row .text {
+  flex: 1;
+  min-width: 0;
+}
+
+.item-row .name {
+  font-size: 15px;
+  color: var(--ink);
+}
+
+.item-row.checked .name {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+
+.item-row .qty {
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.item-row .del {
+  flex: none;
+  border: none;
+  background: none;
+  color: var(--muted);
+  font-size: 18px;
+  line-height: 1;
+  padding: 4px 6px;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.item-row .del:hover { background: var(--surface-2); color: var(--ink); }
+
+.empty-note {
+  color: var(--muted);
+  font-size: 14px;
+  background: var(--surface);
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  padding: 18px;
+  text-align: center;
+}
+
+form.add-item {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+form.add-item input[type="text"] {
+  flex: 1;
+  min-width: 0;
+  font-size: 15px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--ink);
+  font-family: inherit;
+}
+
+form.add-item input[type="text"]:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: 1px;
+}
+
+select.cat-select {
+  font-size: 13px;
+  padding: 10px 8px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--ink);
+  font-family: inherit;
+  max-width: 120px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  select.cat-select-guessed {
+    animation: cat-guess-pulse 0.6s ease-out;
+  }
+  @keyframes cat-guess-pulse {
+    0% { background: color-mix(in srgb, var(--primary) 35%, var(--surface)); border-color: var(--primary); }
+    100% { background: var(--surface); border-color: var(--border); }
+  }
+}
+
+button.btn {
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 14.5px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  padding: 10px 16px;
+  cursor: pointer;
+}
+
+button.btn:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+button.btn.primary { background: var(--accent); color: var(--accent-ink); }
+button.btn.primary:active { opacity: 0.85; }
+
+button.btn.ghost {
+  background: var(--surface);
+  color: var(--ink);
+  border-color: var(--border);
+}
+
+button.btn.ghost:active { background: var(--surface-2); }
+
+footer.util {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
+  z-index: 20;
+}
+
+footer.util .inner {
+  max-width: 640px;
+  margin: 0 auto;
+  display: flex;
+  gap: 8px;
+}
+
+footer.util button.btn { flex: 1; }
+
+.confirm-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 26, 20, 0.5);
+  z-index: 50;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.confirm-overlay.open { display: flex; }
+
+.confirm-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  max-width: 340px;
+  width: 100%;
+  box-shadow: var(--shadow);
+}
+
+.confirm-text {
+  margin: 0 0 16px;
+  color: var(--ink);
+  font-size: 14.5px;
+  line-height: 1.5;
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.confirm-actions .btn { flex: 1; }
+
+.sync-flag {
+  font-size: 11.5px;
+  color: var(--muted);
+  text-align: center;
+  margin: 4px 0 0;
+  min-height: 14px;
+}
+
+.sync-flag-warn {
+  color: var(--accent);
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .recipe-row, .item-row .name { transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease; }
+}
+</style>
+</head><body>
+<div class="wrap" id="app-root"><div id="app"></div></div>
+<footer class="util"><div class="inner">
+  <button class="btn ghost" id="btn-uncheck" type="button">Uncheck all</button>
+  <button class="btn ghost" id="btn-reset" type="button">Start new list</button>
+</div><p class="sync-flag" id="sync-flag"></p></footer>
+<div class="confirm-overlay" id="confirm-overlay"><div class="confirm-card" role="alertdialog" aria-modal="true" aria-labelledby="confirm-text">
+  <p class="confirm-text" id="confirm-text">Start a new list? This clears selected meals, custom items, and checkmarks for everyone.</p>
+  <div class="confirm-actions">
+    <button class="btn ghost" id="confirm-cancel" type="button">Cancel</button>
+    <button class="btn primary" id="confirm-ok" type="button">Start new list</button>
+  </div>
+</div></div>
+<script id="app-script">
+(function () {
+  var CSS_TEXT = ":root {\n  --bg: #f2f4ec;\n  --surface: #ffffff;\n  --surface-2: #eaeee0;\n  --ink: #1e2a1e;\n  --muted: #5b6558;\n  --border: #dbe1cf;\n  --primary: #2f5f42;\n  --primary-ink: #ffffff;\n  --accent: #e2532b;\n  --accent-ink: #ffffff;\n  --good: #2f5f42;\n  --shadow: 0 1px 2px rgba(30, 42, 30, 0.06), 0 6px 16px -8px rgba(30, 42, 30, 0.18);\n  color-scheme: light;\n}\n\n@media (prefers-color-scheme: dark) {\n  :root:not([data-theme=\"light\"]) {\n    --bg: #131d16;\n    --surface: #1b2720;\n    --surface-2: #223028;\n    --ink: #eaf1e6;\n    --muted: #9bb09d;\n    --border: #2b3a30;\n    --primary: #7fc08e;\n    --primary-ink: #0e1a10;\n    --accent: #ff7d52;\n    --accent-ink: #241006;\n    --good: #7fc08e;\n    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 20px -8px rgba(0, 0, 0, 0.5);\n    color-scheme: dark;\n  }\n}\n\n:root[data-theme=\"dark\"] {\n  --bg: #131d16;\n  --surface: #1b2720;\n  --surface-2: #223028;\n  --ink: #eaf1e6;\n  --muted: #9bb09d;\n  --border: #2b3a30;\n  --primary: #7fc08e;\n  --primary-ink: #0e1a10;\n  --accent: #ff7d52;\n  --accent-ink: #241006;\n  --good: #7fc08e;\n  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 20px -8px rgba(0, 0, 0, 0.5);\n  color-scheme: dark;\n}\n\n* { box-sizing: border-box; }\n\nhtml, body {\n  margin: 0;\n  padding: 0;\n  background: var(--bg);\n  color: var(--ink);\n}\n\nbody {\n  font-family: \"Public Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif;\n  font-size: 16px;\n  line-height: 1.45;\n  -webkit-font-smoothing: antialiased;\n  padding-bottom: 96px;\n}\n\n.wrap {\n  max-width: 640px;\n  margin: 0 auto;\n  padding: 0 16px;\n}\n\nheader.top {\n  position: sticky;\n  top: 0;\n  z-index: 20;\n  background: var(--bg);\n  border-bottom: 1px solid var(--border);\n  padding: 14px 16px 12px;\n}\n\nheader.top .inner {\n  max-width: 640px;\n  margin: 0 auto;\n  display: flex;\n  align-items: baseline;\n  justify-content: space-between;\n  gap: 12px;\n}\n\nh1.brand {\n  font-family: \"Fraunces\", Georgia, serif;\n  font-optical-sizing: auto;\n  font-weight: 600;\n  font-size: 22px;\n  margin: 0;\n  letter-spacing: -0.01em;\n  color: var(--ink);\n}\n\nh1.brand span {\n  color: var(--primary);\n}\n\n.count-pill {\n  font-variant-numeric: tabular-nums;\n  font-size: 13px;\n  font-weight: 600;\n  color: var(--muted);\n  white-space: nowrap;\n}\n\nsection { margin-top: 28px; }\n\n.section-head-row {\n  display: flex;\n  align-items: flex-start;\n  justify-content: space-between;\n  gap: 12px;\n}\n\n.collapse-toggle {\n  flex: none;\n  font-family: inherit;\n  font-weight: 600;\n  font-size: 12.5px;\n  color: var(--primary);\n  background: var(--surface-2);\n  border: 1px solid var(--border);\n  border-radius: 999px;\n  padding: 6px 12px;\n  cursor: pointer;\n  white-space: nowrap;\n  margin-top: 2px;\n}\n\nh2.section-title {\n  font-family: \"Fraunces\", Georgia, serif;\n  font-optical-sizing: auto;\n  font-weight: 600;\n  font-size: 19px;\n  margin: 0 0 4px;\n  letter-spacing: -0.005em;\n}\n\np.section-sub {\n  margin: 0 0 12px;\n  color: var(--muted);\n  font-size: 13.5px;\n}\n\n.list-section {\n  margin-top: 32px;\n  margin-left: -16px;\n  margin-right: -16px;\n}\n\n.list-banner {\n  display: flex;\n  align-items: center;\n  gap: 10px;\n  background: var(--primary);\n  color: var(--primary-ink);\n  padding: 14px 16px;\n  border-radius: 14px 14px 0 0;\n  font-family: \"Fraunces\", Georgia, serif;\n  font-optical-sizing: auto;\n  font-weight: 600;\n  font-size: 20px;\n  letter-spacing: -0.005em;\n}\n\n.list-banner-icon { font-size: 21px; }\n\n.list-panel {\n  background: color-mix(in srgb, var(--primary) 6%, var(--surface));\n  border: 1px solid var(--border);\n  border-top: none;\n  border-radius: 0 0 14px 14px;\n  padding: 14px 16px 18px;\n}\n\n.list-panel p.section-sub { margin-top: -2px; }\n\n.recipe-list {\n  display: flex;\n  flex-direction: column;\n  gap: 8px;\n}\n\n.recipe-row {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  background: var(--surface);\n  border: 1px solid var(--border);\n  border-radius: 12px;\n  padding: 12px 14px;\n  box-shadow: var(--shadow);\n  cursor: pointer;\n  -webkit-tap-highlight-color: transparent;\n}\n\n.recipe-row input[type=\"checkbox\"] {\n  width: 22px;\n  height: 22px;\n  flex: none;\n  accent-color: var(--primary);\n}\n\n.recipe-row .meta {\n  flex: 1;\n  min-width: 0;\n}\n\n.recipe-row .name {\n  font-weight: 600;\n  font-size: 15.5px;\n  color: var(--ink);\n}\n\n.recipe-row .time {\n  font-size: 12.5px;\n  color: var(--muted);\n  font-variant-numeric: tabular-nums;\n  margin-top: 1px;\n}\n\n.recipe-row.selected {\n  border-color: var(--primary);\n  background: color-mix(in srgb, var(--primary) 8%, var(--surface));\n}\n\n.cat-group { margin-bottom: 18px; }\n\n.cat-group h3 {\n  font-size: 12px;\n  font-weight: 700;\n  text-transform: uppercase;\n  letter-spacing: 0.08em;\n  color: var(--muted);\n  margin: 0 0 8px;\n}\n\n.item-row {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  padding: 2px;\n  border-bottom: 1px solid var(--border);\n}\n\n.item-row:last-child { border-bottom: none; }\n\n.item-row .tap-area {\n  flex: 1;\n  min-width: 0;\n  display: flex;\n  align-items: flex-start;\n  gap: 12px;\n  padding: 9px 4px;\n  cursor: pointer;\n  -webkit-tap-highlight-color: transparent;\n}\n\n.item-row input[type=\"checkbox\"] {\n  width: 21px;\n  height: 21px;\n  flex: none;\n  margin-top: 2px;\n  accent-color: var(--primary);\n}\n\n.item-row .text {\n  flex: 1;\n  min-width: 0;\n}\n\n.item-row .name {\n  font-size: 15px;\n  color: var(--ink);\n}\n\n.item-row.checked .name {\n  color: var(--muted);\n  text-decoration: line-through;\n}\n\n.item-row .qty {\n  font-size: 12.5px;\n  color: var(--muted);\n}\n\n.item-row .del {\n  flex: none;\n  border: none;\n  background: none;\n  color: var(--muted);\n  font-size: 18px;\n  line-height: 1;\n  padding: 4px 6px;\n  cursor: pointer;\n  border-radius: 6px;\n}\n\n.item-row .del:hover { background: var(--surface-2); color: var(--ink); }\n\n.empty-note {\n  color: var(--muted);\n  font-size: 14px;\n  background: var(--surface);\n  border: 1px dashed var(--border);\n  border-radius: 12px;\n  padding: 18px;\n  text-align: center;\n}\n\nform.add-item {\n  display: flex;\n  gap: 8px;\n  margin-top: 14px;\n}\n\nform.add-item input[type=\"text\"] {\n  flex: 1;\n  min-width: 0;\n  font-size: 15px;\n  padding: 10px 12px;\n  border: 1px solid var(--border);\n  border-radius: 10px;\n  background: var(--surface);\n  color: var(--ink);\n  font-family: inherit;\n}\n\nform.add-item input[type=\"text\"]:focus {\n  outline: 2px solid var(--primary);\n  outline-offset: 1px;\n}\n\nselect.cat-select {\n  font-size: 13px;\n  padding: 10px 8px;\n  border: 1px solid var(--border);\n  border-radius: 10px;\n  background: var(--surface);\n  color: var(--ink);\n  font-family: inherit;\n  max-width: 120px;\n}\n\n@media (prefers-reduced-motion: no-preference) {\n  select.cat-select-guessed {\n    animation: cat-guess-pulse 0.6s ease-out;\n  }\n  @keyframes cat-guess-pulse {\n    0% { background: color-mix(in srgb, var(--primary) 35%, var(--surface)); border-color: var(--primary); }\n    100% { background: var(--surface); border-color: var(--border); }\n  }\n}\n\nbutton.btn {\n  font-family: inherit;\n  font-weight: 600;\n  font-size: 14.5px;\n  border-radius: 10px;\n  border: 1px solid transparent;\n  padding: 10px 16px;\n  cursor: pointer;\n}\n\nbutton.btn:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }\n\nbutton.btn.primary { background: var(--accent); color: var(--accent-ink); }\nbutton.btn.primary:active { opacity: 0.85; }\n\nbutton.btn.ghost {\n  background: var(--surface);\n  color: var(--ink);\n  border-color: var(--border);\n}\n\nbutton.btn.ghost:active { background: var(--surface-2); }\n\nfooter.util {\n  position: fixed;\n  left: 0; right: 0; bottom: 0;\n  background: var(--bg);\n  border-top: 1px solid var(--border);\n  padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));\n  z-index: 20;\n}\n\nfooter.util .inner {\n  max-width: 640px;\n  margin: 0 auto;\n  display: flex;\n  gap: 8px;\n}\n\nfooter.util button.btn { flex: 1; }\n\n.confirm-overlay {\n  display: none;\n  position: fixed;\n  inset: 0;\n  background: rgba(20, 26, 20, 0.5);\n  z-index: 50;\n  align-items: center;\n  justify-content: center;\n  padding: 20px;\n}\n\n.confirm-overlay.open { display: flex; }\n\n.confirm-card {\n  background: var(--surface);\n  border: 1px solid var(--border);\n  border-radius: 14px;\n  padding: 20px;\n  max-width: 340px;\n  width: 100%;\n  box-shadow: var(--shadow);\n}\n\n.confirm-text {\n  margin: 0 0 16px;\n  color: var(--ink);\n  font-size: 14.5px;\n  line-height: 1.5;\n}\n\n.confirm-actions {\n  display: flex;\n  gap: 8px;\n}\n\n.confirm-actions .btn { flex: 1; }\n\n.sync-flag {\n  font-size: 11.5px;\n  color: var(--muted);\n  text-align: center;\n  margin: 4px 0 0;\n  min-height: 14px;\n}\n\n.sync-flag-warn {\n  color: var(--accent);\n  font-weight: 600;\n  cursor: pointer;\n  text-decoration: underline;\n  text-underline-offset: 2px;\n}\n\n@media (prefers-reduced-motion: no-preference) {\n  .recipe-row, .item-row .name { transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease; }\n}\n";
+  var RECIPES = [{"name":"Chicken Enchiladas","time":"65 min","ingredients":[{"ingredient":"Vegetable oil","qty":"1/4 cup","category":"Pantry & Oils"},{"ingredient":"Corn tortillas (6 inch)","qty":"12.0","category":"Bakery & Bread"},{"ingredient":"White onion","qty":"1/2 medium","category":"Produce"},{"ingredient":"Poblano pepper","qty":"1 medium","category":"Produce"},{"ingredient":"Garlic cloves","qty":"3 cloves","category":"Produce"},{"ingredient":"Tomatoes","qty":"2 large","category":"Produce"},{"ingredient":"Cooked chicken (shredded)","qty":"2 cups","category":"Meat & Seafood"},{"ingredient":"Enchilada sauce","qty":"2 1/2 cups","category":"Pantry & Canned Goods"}]},{"name":"Miso Salmon Bowls","time":"35 min","ingredients":[{"ingredient":"White or brown rice","qty":"2 cups","category":"Pantry & Grains"},{"ingredient":"White miso paste","qty":"3 tbsp","category":"Condiments & Sauces"},{"ingredient":"Honey","qty":"2 tbsp","category":"Pantry & Baking"},{"ingredient":"Vegetable oil","qty":"1 tbsp","category":"Pantry & Oils"},{"ingredient":"Fresh ginger (grated)","qty":"1 tbsp","category":"Produce"},{"ingredient":"Salmon fillets (6-8 oz each)","qty":"4 fillets","category":"Meat & Seafood"},{"ingredient":"Scallions / green onions","qty":"4 stalks","category":"Produce"},{"ingredient":"Optional sides (seaweed, cucumber, radish, avocado)","qty":"To taste","category":"Produce"}]},{"name":"Sheet Pan Chicken with Potatoes, Arugula, and Garlic Yogurt","time":"1 hr + marinating","ingredients":[{"ingredient":"Chicken thighs and drumsticks","qty":"1.5 lbs","category":"Meat & Seafood"},{"ingredient":"Yukon gold potatoes","qty":"1 1/4 lbs","category":"Produce"},{"ingredient":"Harissa or sriracha","qty":"2 tbsp","category":"Condiments & Sauces"},{"ingredient":"Leeks","qty":"2.0","category":"Produce"},{"ingredient":"Lemon (for zest & juice)","qty":"1 lemon","category":"Produce"},{"ingredient":"Plain yogurt (not Greek)","qty":"1/3 cup","category":"Dairy & Refrigerated"},{"ingredient":"Garlic clove","qty":"1 clove","category":"Produce"},{"ingredient":"Baby arugula","qty":"2 oz","category":"Produce"},{"ingredient":"Fresh dill","qty":"As needed","category":"Produce"}]},{"name":"Roasted Lemon Chicken Thighs and Potatoes","time":"1.5 hr, mostly downtime","ingredients":[{"ingredient":"Fresh lemons (juiced, ~4 lemons)","qty":"1/2 cup juice","category":"Produce"},{"ingredient":"Olive oil","qty":"1/2 cup","category":"Pantry & Oils"},{"ingredient":"Salt","qty":"2 tsp","category":"Spices & Seasonings"},{"ingredient":"Garlic cloves (grated)","qty":"6 cloves","category":"Produce"},{"ingredient":"Dried oregano","qty":"1 tbsp","category":"Spices & Seasonings"},{"ingredient":"Black pepper","qty":"1/2 tsp","category":"Spices & Seasonings"},{"ingredient":"Yukon gold potatoes (wedges)","qty":"2 lbs","category":"Produce"},{"ingredient":"Bone-in, skin-on chicken thighs","qty":"6 thighs (~2 lbs)","category":"Meat & Seafood"},{"ingredient":"Chicken stock","qty":"1/4 cup","category":"Pantry & Canned Goods"},{"ingredient":"Fresh parsley (chopped)","qty":"2 tbsp","category":"Produce"},{"ingredient":"Fresh dill (chopped)","qty":"2 tbsp","category":"Produce"}]},{"name":"Skillet Chicken Potpie","time":"1.5 hr","ingredients":[{"ingredient":"Bone-in, skin-on chicken breasts/thighs","qty":"2 lbs","category":"Meat & Seafood"},{"ingredient":"Carrots","qty":"3 small","category":"Produce"},{"ingredient":"Celery stalks","qty":"3 stalks","category":"Produce"},{"ingredient":"Garlic cloves","qty":"2 cloves","category":"Produce"},{"ingredient":"Yellow onion","qty":"1 medium","category":"Produce"},{"ingredient":"Fresh thyme","qty":"1 tbsp","category":"Produce"},{"ingredient":"All-purpose flour","qty":"1/3 cup","category":"Pantry & Baking"},{"ingredient":"Low sodium chicken stock","qty":"3 cups","category":"Pantry & Canned Goods"},{"ingredient":"Frozen peas","qty":"1 cup","category":"Frozen"},{"ingredient":"Fresh parsley","qty":"1/4 cup","category":"Produce"},{"ingredient":"Frozen puff pastry sheets","qty":"1 (12-14oz) or 2 (8.5oz)","category":"Frozen"},{"ingredient":"Egg","qty":"1 large","category":"Dairy & Refrigerated"}]},{"name":"Chicken Soup with Toasted Farro and Greens","time":"45 min","ingredients":[{"ingredient":"Leeks","qty":"2 medium","category":"Produce"},{"ingredient":"Carrots","qty":"2 medium","category":"Produce"},{"ingredient":"Celery stalk","qty":"1 stalk","category":"Produce"},{"ingredient":"Garlic cloves","qty":"3 cloves","category":"Produce"},{"ingredient":"Fennel seeds","qty":"1 tsp","category":"Spices & Seasonings"},{"ingredient":"Red pepper flakes","qty":"1/2 tsp","category":"Spices & Seasonings"},{"ingredient":"Farro","qty":"1 cup","category":"Pantry & Grains"},{"ingredient":"Low sodium chicken stock","qty":"6 cups","category":"Pantry & Canned Goods"},{"ingredient":"Boneless, skinless chicken thighs","qty":"3/4 lb","category":"Meat & Seafood"},{"ingredient":"Kale or Swiss chard","qty":"5 cups","category":"Produce"},{"ingredient":"Crusty bread","qty":"1 loaf","category":"Bakery & Bread"},{"ingredient":"Lemon (for zest)","qty":"1 lemon","category":"Produce"}]},{"name":"Tuscan Style Chicken Soup","time":"45 min","ingredients":[{"ingredient":"Yellow onion","qty":"1 medium","category":"Produce"},{"ingredient":"Garlic cloves","qty":"2 cloves","category":"Produce"},{"ingredient":"Fresh thyme sprigs","qty":"2 sprigs","category":"Produce"},{"ingredient":"Celery stalk","qty":"1 stalk","category":"Produce"},{"ingredient":"Carrots","qty":"2 medium","category":"Produce"},{"ingredient":"Russet potatoes","qty":"2 medium","category":"Produce"},{"ingredient":"Chicken stock","qty":"4 cups","category":"Pantry & Canned Goods"},{"ingredient":"Cannellini beans (white kidney beans)","qty":"1 can (14 oz)","category":"Pantry & Canned Goods"},{"ingredient":"Cooked chicken breasts (boneless/skinless)","qty":"2 breasts","category":"Meat & Seafood"},{"ingredient":"Kale","qty":"3.5 oz","category":"Produce"},{"ingredient":"Fresh parsley","qty":"To taste","category":"Produce"},{"ingredient":"Crusty bread","qty":"1 loaf","category":"Bakery & Bread"}]},{"name":"Ground Beef Chili","time":"2.5 hr","ingredients":[{"ingredient":"Yellow onion","qty":"1 large","category":"Produce"},{"ingredient":"Garlic cloves","qty":"5 cloves","category":"Produce"},{"ingredient":"Poblano peppers","qty":"2 peppers","category":"Produce"},{"ingredient":"Serrano or jalape\u00f1o pepper","qty":"1 pepper","category":"Produce"},{"ingredient":"80/20 Ground beef","qty":"1 3/4 lbs","category":"Meat & Seafood"},{"ingredient":"Chili powder","qty":"2 tbsp","category":"Spices & Seasonings"},{"ingredient":"Smoked paprika","qty":"1 tbsp","category":"Spices & Seasonings"},{"ingredient":"Ground cumin","qty":"1 tbsp","category":"Spices & Seasonings"},{"ingredient":"Ground coriander","qty":"2 tsp","category":"Spices & Seasonings"},{"ingredient":"Cayenne pepper","qty":"1/4 tsp","category":"Spices & Seasonings"},{"ingredient":"Modelo beer","qty":"1 bottle (12 oz)","category":"Beverages"},{"ingredient":"Chicken stock","qty":"1 cup","category":"Pantry & Canned Goods"},{"ingredient":"Crushed tomatoes","qty":"1 can (28 oz)","category":"Pantry & Canned Goods"},{"ingredient":"Worcestershire sauce","qty":"1 tbsp","category":"Condiments & Sauces"},{"ingredient":"Bay leaves","qty":"2 leaves","category":"Spices & Seasonings"},{"ingredient":"Black beans","qty":"1 can (14.5 oz)","category":"Pantry & Canned Goods"},{"ingredient":"Optional toppings (shredded cheese, sour cream, tortilla chips)","qty":"As desired","category":"Dairy & Refrigerated"}]},{"name":"Honey Garlic Glazed Salmon","time":"20 min","ingredients":[{"ingredient":"Salmon fillets (6 oz each)","qty":"4 fillets","category":"Meat & Seafood"},{"ingredient":"Smoked paprika","qty":"1/2 tsp","category":"Spices & Seasonings"},{"ingredient":"Butter","qty":"3 tbsp","category":"Dairy & Refrigerated"},{"ingredient":"Garlic cloves","qty":"6 cloves","category":"Produce"},{"ingredient":"Honey","qty":"1/2 cup","category":"Pantry & Baking"},{"ingredient":"Soy sauce","qty":"3 tbsp","category":"Condiments & Sauces"},{"ingredient":"Sriracha sauce","qty":"1 tbsp","category":"Condiments & Sauces"},{"ingredient":"Lemon juice","qty":"2 tbsp","category":"Produce"},{"ingredient":"Sides (rice, green beans, or broccoli)","qty":"As desired","category":"Produce"}]},{"name":"Chicken Vesuvio","time":"1 hr","ingredients":[{"ingredient":"Whole chicken (cut into 8 bone-in parts)","qty":"1 (4-4.5 lbs)","category":"Meat & Seafood"},{"ingredient":"Kosher salt & black pepper","qty":"To taste","category":"Spices & Seasonings"},{"ingredient":"Olive oil","qty":"For drizzling","category":"Pantry & Oils"},{"ingredient":"Baby gold potatoes (halved)","qty":"18 oz","category":"Produce"},{"ingredient":"Garlic cloves (smashed)","qty":"6 cloves","category":"Produce"},{"ingredient":"Dried oregano","qty":"2 tsp","category":"Spices & Seasonings"},{"ingredient":"Fresh thyme sprigs","qty":"5 sprigs","category":"Produce"},{"ingredient":"Dry white wine","qty":"1/2 cup","category":"Beverages"},{"ingredient":"Low sodium chicken broth","qty":"1/3 cup","category":"Pantry & Canned Goods"},{"ingredient":"Lemon (zested and juiced)","qty":"1 lemon","category":"Produce"},{"ingredient":"Snap peas (cleaned and halved)","qty":"6 oz","category":"Produce"},{"ingredient":"Frozen peas","qty":"1/2 cup","category":"Frozen"},{"ingredient":"Fresh chives (sliced)","qty":"1/4 cup","category":"Produce"}]}];
+  var CATEGORY_ORDER = ["Produce","Meat & Seafood","Dairy & Refrigerated","Bakery & Bread","Frozen","Pantry & Grains","Pantry & Canned Goods","Pantry & Baking","Pantry & Oils","Condiments & Sauces","Spices & Seasonings","Beverages","Household & Personal Care","Other"];
+
+  // ---- aisle-guessing keyword map (unchanged from the previous version) ----
+  var CATEGORY_KEYWORDS = {
+    'Produce': ['apple', 'banana', 'orange', 'grape', 'strawberr', 'blueberr', 'raspberr',
+      'blackberr', 'melon', 'lemon', 'lime', 'avocado', 'tomato', 'lettuce', 'spinach',
+      'cucumber', 'carrot', 'potato', 'onion', 'garlic', 'bell pepper', 'broccoli',
+      'cauliflower', 'mushroom', 'celery', 'cilantro', 'parsley', 'basil', 'ginger',
+      'kale', 'zucchini', 'sweet potato', 'green beans', 'asparagus', 'corn', 'fruit',
+      'vegetable', 'herbs', 'salad'],
+    'Meat & Seafood': ['chicken', 'beef', 'pork', 'turkey', 'bacon', 'sausage', 'ham',
+      'steak', 'ground beef', 'salmon', 'shrimp', 'tuna', 'fish', 'tilapia', 'cod',
+      'meat', 'seafood', 'lamb', 'deli'],
+    'Dairy & Refrigerated': ['milk', 'cheese', 'yogurt', 'butter', 'cream cheese',
+      'sour cream', 'cottage cheese', 'half and half', 'eggs', 'egg', 'creamer'],
+    'Bakery & Bread': ['bread', 'bagel', 'tortilla', 'bun', 'dinner roll', 'muffin',
+      'croissant', 'pita', 'baguette', 'pastry', 'donut'],
+    'Frozen': ['frozen', 'ice cream', 'popsicle', 'waffle'],
+    'Pantry & Grains': ['rice', 'pasta', 'spaghetti', 'noodle', 'quinoa', 'oats',
+      'oatmeal', 'cereal', 'flour', 'couscous', 'granola'],
+    'Pantry & Canned Goods': ['canned', 'can of', 'broth', 'stock', 'tomato sauce',
+      'soup', 'beans', 'chickpeas', 'crushed tomato'],
+    'Pantry & Baking': ['sugar', 'honey', 'baking powder', 'baking soda', 'vanilla extract',
+      'chocolate chip', 'cake mix', 'brown sugar', 'powdered sugar', 'yeast'],
+    'Pantry & Oils': ['olive oil', 'vegetable oil', 'cooking spray', 'canola oil', 'coconut oil'],
+    'Condiments & Sauces': ['ketchup', 'mustard', 'mayo', 'soy sauce', 'salsa', 'bbq sauce',
+      'hot sauce', 'dressing', 'vinegar', 'sriracha', 'worcestershire', 'jam', 'jelly',
+      'peanut butter'],
+    'Spices & Seasonings': ['salt', 'pepper', 'cinnamon', 'cumin', 'paprika', 'oregano',
+      'chili powder', 'garlic powder', 'onion powder', 'seasoning', 'spice', 'bay leaf'],
+    'Beverages': ['soda', 'juice', 'coffee', 'tea bags', 'beer', 'wine', 'sparkling water',
+      'bottled water', 'lemonade', 'seltzer'],
+    'Household & Personal Care': ['paper towel', 'toilet paper', 'napkin', 'dish soap',
+      'detergent', 'laundry', 'trash bag', 'ziploc', 'foil', 'plastic wrap', 'shampoo',
+      'conditioner', 'toothpaste', 'deodorant', 'batteries', 'light bulb', 'sponge',
+      'tissue', 'soap', 'paper plate', 'paper cup', 'diaper', 'cleaner']
+  };
+
+  RECIPES.forEach(function (r) {
+    r.ingredients.forEach(function (ing) {
+      var cleaned = (ing.ingredient || '').toLowerCase().replace(/\(.*?\)/g, '').trim();
+      if (!cleaned) return;
+      if (!CATEGORY_KEYWORDS[ing.category]) CATEGORY_KEYWORDS[ing.category] = [];
+      if (CATEGORY_KEYWORDS[ing.category].indexOf(cleaned) === -1) CATEGORY_KEYWORDS[ing.category].push(cleaned);
+    });
+  });
+
+  var KEYWORD_ENTRIES = [];
+  Object.keys(CATEGORY_KEYWORDS).forEach(function (cat) {
+    CATEGORY_KEYWORDS[cat].forEach(function (kw) { KEYWORD_ENTRIES.push([kw, cat]); });
+  });
+
+  function guessCategory(text) {
+    var norm = (text || '').toLowerCase().trim();
+    if (!norm) return null;
+    var best = null, bestLen = 0;
+    for (var i = 0; i < KEYWORD_ENTRIES.length; i++) {
+      var kw = KEYWORD_ENTRIES[i][0];
+      if (kw.length > bestLen && norm.indexOf(kw) !== -1) {
+        best = KEYWORD_ENTRIES[i][1];
+        bestLen = kw.length;
+      }
+    }
+    return best;
+  }
+
+  function defaultState() {
+    return { selectedRecipes: [], customItems: [], removedKeys: [], checkedKeys: [] };
+  }
+
+  function normalizeState(s) {
+    s = s || {};
+    return {
+      selectedRecipes: Array.isArray(s.selectedRecipes) ? s.selectedRecipes : [],
+      customItems: Array.isArray(s.customItems) ? s.customItems : [],
+      removedKeys: Array.isArray(s.removedKeys) ? s.removedKeys : [],
+      checkedKeys: Array.isArray(s.checkedKeys) ? s.checkedKeys : []
+    };
+  }
+
+  var STATE = defaultState();
+  var loaded = false; // true once the first Firestore snapshot has arrived
+
+  // Meal-picker expand/collapse is per-device UI state, not part of the
+  // synced list — kept in localStorage so it isn't affected by other
+  // people's edits and doesn't reset itself when you pick a meal.
+  var MEALS_COLLAPSED_KEY = 'shopping-list:mealsCollapsed';
+  var recipesExpanded = true;
+  try { recipesExpanded = localStorage.getItem(MEALS_COLLAPSED_KEY) !== '1'; } catch (e) {}
+
+  function setRecipesExpanded(value) {
+    recipesExpanded = value;
+    try { localStorage.setItem(MEALS_COLLAPSED_KEY, value ? '0' : '1'); } catch (e) {}
+  }
+
+  function normKey(category, name) {
+    return category + '::' + name.trim().toLowerCase().replace(/\s+/g, ' ');
+  }
+
+  function computeList(state) {
+    var map = {};
+    state.selectedRecipes.forEach(function (rname) {
+      var recipe = RECIPES.filter(function (r) { return r.name === rname; })[0];
+      if (!recipe) return;
+      recipe.ingredients.forEach(function (ing) {
+        var key = normKey(ing.category, ing.ingredient);
+        if (state.removedKeys.indexOf(key) !== -1) return;
+        if (!map[key]) {
+          map[key] = { key: key, name: ing.ingredient, category: ing.category, qtyParts: [], recipes: [], custom: false };
+        }
+        if (ing.qty) map[key].qtyParts.push(ing.qty);
+        map[key].recipes.push(rname);
+      });
+    });
+    state.customItems.forEach(function (item) {
+      var key = 'custom::' + item.id;
+      map[key] = { key: key, name: item.name, category: item.category || 'Other', qtyParts: item.qty ? [item.qty] : [], recipes: [], custom: true };
+    });
+
+    var byCategory = {};
+    Object.keys(map).forEach(function (k) {
+      var row = map[k];
+      row.checked = state.checkedKeys.indexOf(row.key) !== -1;
+      row.qtyText = row.qtyParts.join(' + ');
+      if (!byCategory[row.category]) byCategory[row.category] = [];
+      byCategory[row.category].push(row);
+    });
+    Object.keys(byCategory).forEach(function (c) {
+      byCategory[c].sort(function (a, b) { return a.name.localeCompare(b.name); });
+    });
+    return byCategory;
+  }
+
+  var appEl;
+
+  function el(tag, attrs, children) {
+    var e = document.createElement(tag);
+    if (attrs) Object.keys(attrs).forEach(function (k) {
+      if (k === 'class') e.className = attrs[k];
+      else if (k === 'text') e.textContent = attrs[k];
+      else e.setAttribute(k, attrs[k]);
+    });
+    (children || []).forEach(function (c) { if (c) e.appendChild(c); });
+    return e;
+  }
+
+  function render() {
+    if (!appEl) return;
+    appEl.innerHTML = '';
+    if (!loaded) {
+      appEl.appendChild(el('div', { class: 'empty-note', text: 'Loading your list…' }));
+      return;
+    }
+    appEl.appendChild(buildHeader());
+    appEl.appendChild(buildRecipeSection());
+    appEl.appendChild(buildListSection());
+  }
+
+  function buildHeader() {
+    var byCategory = computeList(STATE);
+    var total = 0, done = 0;
+    Object.keys(byCategory).forEach(function (c) {
+      byCategory[c].forEach(function (r) { total++; if (r.checked) done++; });
+    });
+    var header = el('header', { class: 'top' });
+    var inner = el('div', { class: 'inner' }, [
+      el('h1', { class: 'brand' }, [document.createTextNode('Shopping '), el('span', { text: 'List' })]),
+      el('div', { class: 'count-pill', text: total ? (done + ' / ' + total + ' picked up') : 'No list yet' })
+    ]);
+    header.appendChild(inner);
+    return header;
+  }
+
+  function buildRecipeSection() {
+    var section = el('section', { id: 'meals-section' });
+    var headRow = el('div', { class: 'section-head-row' });
+    var titleWrap = el('div', {}, [
+      el('h2', { class: 'section-title', text: "This week's meals" }),
+      el('p', { class: 'section-sub', text: 'Pick what you’re making — ingredients land in the list below.' })
+    ]);
+    var pickedCount = STATE.selectedRecipes.length;
+    var toggleLabel = recipesExpanded
+      ? 'Hide meals ▲'
+      : (pickedCount ? 'Show ' + pickedCount + ' meal' + (pickedCount === 1 ? '' : 's') + ' ▼' : 'Show meals ▼');
+    var toggleBtn = el('button', { class: 'collapse-toggle', type: 'button', text: toggleLabel });
+    toggleBtn.addEventListener('click', function () { setRecipesExpanded(!recipesExpanded); render(); });
+    headRow.appendChild(titleWrap);
+    headRow.appendChild(toggleBtn);
+    section.appendChild(headRow);
+
+    if (recipesExpanded) {
+      var list = el('div', { class: 'recipe-list' });
+      RECIPES.forEach(function (r) {
+        var checked = STATE.selectedRecipes.indexOf(r.name) !== -1;
+        var cb = el('input', { type: 'checkbox' });
+        cb.checked = checked;
+        cb.addEventListener('change', function () { toggleRecipe(r.name); });
+        var row = el('label', { class: 'recipe-row' + (checked ? ' selected' : '') }, [
+          cb,
+          el('div', { class: 'meta' }, [
+            el('div', { class: 'name', text: r.name }),
+            el('div', { class: 'time', text: r.time })
+          ])
+        ]);
+        list.appendChild(row);
+      });
+      section.appendChild(list);
+    }
+    return section;
+  }
+
+  function buildListSection() {
+    var section = el('section', { id: 'list-section', class: 'list-section' });
+    var banner = el('div', { class: 'list-banner' }, [
+      el('span', { class: 'list-banner-icon', text: '🛒' }),
+      el('span', { text: 'Shopping List' })
+    ]);
+    section.appendChild(banner);
+
+    var panel = el('div', { class: 'list-panel' });
+    panel.appendChild(el('p', { class: 'section-sub', text: 'Grouped by aisle. Tap to check off at the store.' }));
+
+    var byCategory = computeList(STATE);
+    var any = false;
+    CATEGORY_ORDER.forEach(function (cat) {
+      var rows = byCategory[cat];
+      if (!rows || !rows.length) return;
+      any = true;
+      var group = el('div', { class: 'cat-group' });
+      group.appendChild(el('h3', { text: cat }));
+      rows.forEach(function (row) {
+        var cb = el('input', { type: 'checkbox' });
+        cb.checked = row.checked;
+        cb.addEventListener('change', function () { toggleChecked(row.key); });
+        var textWrap = el('div', { class: 'text' }, [
+          el('div', { class: 'name', text: row.name })
+        ].concat(row.qtyText ? [el('div', { class: 'qty', text: row.qtyText })] : []));
+        var tapLabel = el('label', { class: 'tap-area' }, [cb, textWrap]);
+        var delBtn = el('button', { class: 'del', text: '×', 'aria-label': 'Remove ' + row.name, type: 'button' });
+        delBtn.addEventListener('click', function (ev) { ev.stopPropagation(); removeItem(row); });
+        var itemRow = el('div', { class: 'item-row' + (row.checked ? ' checked' : '') }, [tapLabel, delBtn]);
+        group.appendChild(itemRow);
+      });
+      panel.appendChild(group);
+    });
+
+    if (!any) {
+      panel.appendChild(el('div', { class: 'empty-note', text: 'Select a meal above, or add an item below, to start your list.' }));
+    }
+
+    var form = el('form', { class: 'add-item' });
+    var input = el('input', { type: 'text', placeholder: 'Add an item…', 'aria-label': 'New item name' });
+    var select = el('select', { class: 'cat-select', 'aria-label': 'Category (guessed automatically as you type)' });
+    CATEGORY_ORDER.forEach(function (c) {
+      var opt = el('option', { value: c, text: c });
+      if (c === 'Other') opt.selected = true;
+      select.appendChild(opt);
+    });
+    var addBtn = el('button', { class: 'btn primary', type: 'submit', text: 'Add' });
+    form.appendChild(input); form.appendChild(select); form.appendChild(addBtn);
+
+    var userPickedCategory = false;
+    select.addEventListener('change', function () { userPickedCategory = true; });
+    input.addEventListener('input', function () {
+      if (userPickedCategory) return;
+      var guess = guessCategory(input.value) || 'Other';
+      if (select.value !== guess) {
+        select.value = guess;
+        select.classList.remove('cat-select-guessed');
+        void select.offsetWidth;
+        select.classList.add('cat-select-guessed');
+      }
+    });
+
+    form.addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      var name = input.value.trim();
+      if (!name) return;
+      addCustomItem(name, select.value);
+      input.value = '';
+      select.value = 'Other';
+      userPickedCategory = false;
+      input.focus();
+    });
+    panel.appendChild(form);
+
+    section.appendChild(panel);
+    return section;
+  }
+
+  function toggleRecipe(name) {
+    var s = cloneState();
+    var i = s.selectedRecipes.indexOf(name);
+    if (i === -1) s.selectedRecipes.push(name); else s.selectedRecipes.splice(i, 1);
+    commit(s);
+  }
+
+  function toggleChecked(key) {
+    var s = cloneState();
+    var i = s.checkedKeys.indexOf(key);
+    if (i === -1) s.checkedKeys.push(key); else s.checkedKeys.splice(i, 1);
+    commit(s);
+  }
+
+  function removeItem(row) {
+    var s = cloneState();
+    if (row.custom) {
+      var id = row.key.replace('custom::', '');
+      s.customItems = s.customItems.filter(function (it) { return it.id !== id; });
+    } else {
+      if (s.removedKeys.indexOf(row.key) === -1) s.removedKeys.push(row.key);
+    }
+    s.checkedKeys = s.checkedKeys.filter(function (k) { return k !== row.key; });
+    commit(s);
+  }
+
+  function addCustomItem(name, category) {
+    var s = cloneState();
+    var id = Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+    s.customItems.push({ id: id, name: name, qty: '', category: category || 'Other' });
+    commit(s);
+  }
+
+  function uncheckAll() {
+    var s = cloneState();
+    s.checkedKeys = [];
+    commit(s);
+  }
+
+  function openResetConfirm() {
+    var overlay = document.getElementById('confirm-overlay');
+    if (overlay) overlay.classList.add('open');
+  }
+
+  function closeResetConfirm() {
+    var overlay = document.getElementById('confirm-overlay');
+    if (overlay) overlay.classList.remove('open');
+  }
+
+  function cloneState() {
+    return JSON.parse(JSON.stringify(STATE));
+  }
+
+  // ---- Firestore wiring ----
+  // Everyone who opens this page reads and writes the same single document.
+  // Firestore's own SDK handles offline queueing, retry, and real-time push
+  // to every other open tab/phone — no hand-rolled retry/backoff needed here.
+  var db = null;
+  var docRef = null;
+  var writeTimer = null;
+  var firebaseReady = window.__firebaseReady; // set by the module script below
+
+  function updateSyncFlag(mode) {
+    var flag = document.getElementById('sync-flag');
+    if (!flag) return;
+    flag.className = 'sync-flag';
+    flag.onclick = null;
+    if (mode === 'saving') {
+      flag.textContent = 'Saving…';
+    } else if (mode === 'saved') {
+      flag.textContent = '';
+    } else if (mode === 'offline') {
+      flag.textContent = 'Offline — showing last saved list, will sync when back online';
+      flag.classList.add('sync-flag-warn');
+    } else if (mode === 'error') {
+      flag.textContent = 'Could not connect (tap to retry)';
+      flag.classList.add('sync-flag-warn');
+      flag.onclick = function () { window.location.reload(); };
+    }
+  }
+
+  function commit(newState) {
+    STATE = newState;
+    render();
+    if (!docRef) return;
+    updateSyncFlag('saving');
+    clearTimeout(writeTimer);
+    writeTimer = setTimeout(function () {
+      window.__firestoreSetDoc(docRef, newState).catch(function () {
+        // The SDK already queued this write locally and will retry once
+        // connectivity returns, so this just reflects that back visually.
+        updateSyncFlag('offline');
+      });
+    }, 250);
+  }
+
+  function startFirestoreSync(firebaseApp, firestoreExports) {
+    db = firestoreExports.db;
+    docRef = firestoreExports.docRef;
+    window.__firestoreSetDoc = firestoreExports.setDoc;
+
+    firestoreExports.onSnapshot(docRef, { includeMetadataChanges: true }, function (snap) {
+      if (snap.exists()) {
+        STATE = normalizeState(snap.data());
+      } else {
+        STATE = defaultState();
+        firestoreExports.setDoc(docRef, STATE).catch(function () {});
+      }
+      loaded = true;
+      render();
+      if (snap.metadata.hasPendingWrites) {
+        updateSyncFlag('saving');
+      } else if (snap.metadata.fromCache) {
+        updateSyncFlag('offline');
+      } else {
+        updateSyncFlag('saved');
+      }
+    }, function () {
+      updateSyncFlag('error');
+    });
+  }
+
+  function wireFooter() {
+    var u = document.getElementById('btn-uncheck');
+    var r = document.getElementById('btn-reset');
+    if (u) u.addEventListener('click', uncheckAll);
+    if (r) r.addEventListener('click', openResetConfirm);
+
+    var overlay = document.getElementById('confirm-overlay');
+    var cancelBtn = document.getElementById('confirm-cancel');
+    var okBtn = document.getElementById('confirm-ok');
+    if (cancelBtn) cancelBtn.addEventListener('click', closeResetConfirm);
+    if (okBtn) okBtn.addEventListener('click', function () {
+      closeResetConfirm();
+      commit(defaultState());
+    });
+    if (overlay) {
+      overlay.addEventListener('click', function (ev) {
+        if (ev.target === overlay) closeResetConfirm();
+      });
+    }
+    try {
+      document.addEventListener('keydown', function (ev) {
+        if (ev.key === 'Escape') closeResetConfirm();
+      });
+    } catch (e) {}
+  }
+
+  function init() {
+    appEl = document.getElementById('app');
+    var styleTag = document.getElementById('style-tag');
+    if (styleTag && !styleTag.textContent) styleTag.textContent = CSS_TEXT;
+    render();
+    wireFooter();
+  }
+
+  init();
+
+  // Exposed so the module-type Firebase bootstrap script (which must live in
+  // its own <script type="module"> tag to use import syntax) can hand the
+  // initialized Firestore pieces back into this plain script once ready.
+  window.__startFirestoreSync = startFirestoreSync;
+  window.__onFirestoreError = function () { updateSyncFlag('error'); };
+})();
+
+</script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+  import {
+    initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
+    doc, onSnapshot, setDoc
+  } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+
+  var firebaseConfig = {"apiKey": "AIzaSyDpXJggaG4I_5KHWKOhoSpmprJvqIFRDD0", "authDomain": "grocery-list-a8d3d.firebaseapp.com", "projectId": "grocery-list-a8d3d", "storageBucket": "grocery-list-a8d3d.firebasestorage.app", "messagingSenderId": "795599791358", "appId": "1:795599791358:web:3de30ddcfda75c8fc2b1af", "measurementId": "G-1VFB7F5NSY"};
+  var listDocPath = "shopping-list/main";
+
+  var app = initializeApp(firebaseConfig);
+  var db;
+  try {
+    db = initializeFirestore(app, { localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }) });
+  } catch (e) {
+    // Falls back to in-memory-only cache on browsers without IndexedDB support.
+    db = initializeFirestore(app, {});
+  }
+
+  var parts = listDocPath.split('/');
+  var docRef = doc(db, parts[0], parts[1]);
+
+  function boot() {
+    window.__startFirestoreSync(app, { db: db, docRef: docRef, onSnapshot: onSnapshot, setDoc: setDoc });
+  }
+  if (window.__startFirestoreSync) { boot(); }
+  else { window.addEventListener('DOMContentLoaded', boot); }
+</script>
+</body></html>
