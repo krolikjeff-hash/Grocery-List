@@ -1,1463 +1,975 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+<!doctype html><html lang="en"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0E3122">
+<title>Shopping List</title>
+<meta name="theme-color" content="#2f5f42">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="9 Deck">
-<title>9 Deck — Scorepad</title>
+<meta name="apple-mobile-web-app-title" content="Shopping List">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icon-32.png" sizes="32x32">
-<link rel="icon" href="icon-64.png" sizes="64x64">
-<link rel="apple-touch-icon" href="icon-180.png">
-<style>
-:root{
-  --baize:#14432E;
-  --baize-dark:#0E3122;
-  --baize-line:#1D5A3E;
-  --stock:#F6F1E4;
-  --stock-edge:#E0D6BF;
-  --stock-sunk:#EDE6D4;
-  --ink:#17140F;
-  --ink-soft:#6A6252;
-  --red:#A8172B;
-  --brass:#A8811F;
-  --brass-soft:#F0E4C2;
-  --font-body:"Public Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
-  --font-card:"Fraunces",Georgia,"Iowan Old Style","Times New Roman",serif;
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style id="style-tag">:root {
+  --bg: #f2f4ec;
+  --surface: #ffffff;
+  --surface-2: #eaeee0;
+  --ink: #1e2a1e;
+  --muted: #5b6558;
+  --border: #dbe1cf;
+  --primary: #2f5f42;
+  --primary-ink: #ffffff;
+  --accent: #e2532b;
+  --accent-ink: #ffffff;
+  --good: #2f5f42;
+  --shadow: 0 1px 2px rgba(30, 42, 30, 0.06), 0 6px 16px -8px rgba(30, 42, 30, 0.18);
+  color-scheme: light;
 }
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;padding:0}
-body{
-  background:var(--baize-dark);
-  background-image:radial-gradient(ellipse at 50% 0%, var(--baize) 0%, var(--baize-dark) 70%);
-  background-attachment:fixed;
-  color:var(--stock);
-  font-family:var(--font-body);
-  font-size:16px;
-  line-height:1.45;
-  padding-bottom:env(safe-area-inset-bottom);
-  overscroll-behavior-y:none;
-}
-button{font:inherit;color:inherit;cursor:pointer;border:none;background:none}
-input{font:inherit}
-:focus-visible{outline:2px solid var(--brass);outline-offset:2px;border-radius:3px}
 
-/* ---------- chrome ---------- */
-.masthead{
-  padding:14px 16px 0;
-  max-width:640px;margin:0 auto;
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #131d16;
+    --surface: #1b2720;
+    --surface-2: #223028;
+    --ink: #eaf1e6;
+    --muted: #9bb09d;
+    --border: #2b3a30;
+    --primary: #7fc08e;
+    --primary-ink: #0e1a10;
+    --accent: #ff7d52;
+    --accent-ink: #241006;
+    --good: #7fc08e;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 20px -8px rgba(0, 0, 0, 0.5);
+    color-scheme: dark;
+  }
 }
-.mast-in{display:flex;align-items:flex-end;gap:14px;border-bottom:1px solid var(--baize-line)}
-.mast-left{flex:1 1 auto;min-width:0}
-.mast-in .mark{display:block;color:var(--brass-soft);flex:0 0 50px;
-  opacity:.9;margin-bottom:-1px}
-.wordmark-text{
-  font-family:var(--font-card);
-  font-size:19px;letter-spacing:.01em;
-  color:var(--brass-soft);
-  font-weight:400;
-  margin:2px 0 12px;
-}
-.wordmark-text b{font-weight:700;color:var(--stock)}
-.tabs{display:flex;gap:2px}
-.tab{
-  padding:9px 14px;font-size:14px;color:rgba(246,241,228,.6);
-  border-bottom:2px solid transparent;margin-bottom:-1px;
-}
-.tab[aria-selected="true"]{color:var(--stock);border-bottom-color:var(--brass)}
 
-main{max-width:640px;margin:0 auto;padding:14px 16px 150px}
-.panel{display:none}
-.panel.on{display:block}
-
-/* ---------- the sheet ---------- */
-.sheet{
-  background:var(--stock);
-  color:var(--ink);
-  border-radius:14px;
-  border:1px solid var(--stock-edge);
-  box-shadow:0 10px 24px rgba(0,0,0,.34);
-  padding:14px;
-  margin-bottom:14px;
+:root[data-theme="dark"] {
+  --bg: #131d16;
+  --surface: #1b2720;
+  --surface-2: #223028;
+  --ink: #eaf1e6;
+  --muted: #9bb09d;
+  --border: #2b3a30;
+  --primary: #7fc08e;
+  --primary-ink: #0e1a10;
+  --accent: #ff7d52;
+  --accent-ink: #241006;
+  --good: #7fc08e;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 20px -8px rgba(0, 0, 0, 0.5);
+  color-scheme: dark;
 }
-.sheet h2{
-  font-family:var(--font-card);
-  font-size:16px;font-weight:700;margin:0 0 10px;
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--ink);
 }
-.sheet p.note{font-size:13px;color:var(--ink-soft);margin:0 0 12px;line-height:1.4}
 
-/* ---------- team switch ---------- */
-.teamswitch{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
-.teamswitch button{
-  background:rgba(246,241,228,.07);
-  border:1px solid var(--baize-line);
-  border-radius:5px;padding:10px 8px;text-align:left;
+body {
+  font-family: "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 16px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: 96px;
 }
-.teamswitch button[aria-pressed="true"]{background:var(--stock);color:var(--ink);border-color:var(--stock)}
-.teamswitch .tname{display:block;font-family:var(--font-card);font-weight:700;font-size:15px;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.teamswitch .tsub{display:block;font-size:12px;opacity:.65;font-variant-numeric:tabular-nums}
-.pip{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:1px}
-.pip.a{background:var(--red)}
-.pip.b{background:var(--ink)}
-.teamswitch button[aria-pressed="false"] .pip.b{background:var(--stock)}
 
-/* ---------- books grid ---------- */
-.grid{display:grid;grid-template-columns:30px minmax(0,1.15fr) minmax(0,1fr) minmax(0,1fr) 50px;
-  gap:4px;align-items:center}
-.ghead{font-size:11px;color:var(--ink-soft);text-align:center;padding-bottom:2px}
-.rank{
-  font-family:var(--font-card);font-weight:700;font-size:17px;text-align:center;
-  line-height:1;
+.wrap {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0 16px;
 }
-.rankrow{display:contents}
-.rankrow .cell-bg{}
-.step{display:flex;align-items:center;justify-content:space-between;
-  background:var(--stock-sunk);border:1px solid var(--stock-edge);border-radius:12px;
-  height:40px;overflow:hidden}
-.step.hot{border-color:var(--brass);background:#FBF6E6}
-.step button{width:30px;height:100%;font-size:17px;line-height:1;color:var(--ink-soft);flex:0 0 auto}
-.step button:active{background:rgba(0,0,0,.07)}
-.step button[disabled]{opacity:.28;cursor:default}
-.step .val{flex:1 1 auto;text-align:center;font-variant-numeric:tabular-nums;font-size:16px;
-  font-weight:600;min-width:0}
-.step .val.zero{color:#B9B099;font-weight:400}
-.seal{
-  font-size:10px;line-height:1.15;text-align:center;border-radius:11px;padding:4px 2px;
-  font-variant-numeric:tabular-nums;
+
+header.top {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 16px 12px;
 }
-.seal.none{color:#C3BAA3}
-.seal.open{background:var(--stock-sunk);color:var(--ink-soft);border:1px solid var(--stock-edge)}
-.seal.clean{background:var(--brass);color:#FFF9E8;font-weight:700}
-.seal.dirty{background:var(--brass-soft);color:#7A5D12;font-weight:700;border:1px solid #DCCB9C}
-.divline{grid-column:1/-1;height:1px;background:var(--stock-edge);margin:2px 0}
 
-/* ---------- leftovers ---------- */
-.sheethead{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.claim{font-size:12px;font-weight:400;font-family:var(--font-body);
-  border:1px solid var(--stock-edge);background:var(--stock-sunk);border-radius:8px;
-  padding:4px 10px;color:var(--ink-soft)}
-.finishrow{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;
-  padding:9px 0;border-top:1px solid var(--stock-edge)}
-.finishrow:first-child{border-top:none}
-.finishrow .fn{font-family:var(--font-card);font-weight:700;font-size:14px;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.finishrow .fv{font-variant-numeric:tabular-nums;font-weight:600}
-.finishrow .fv.neg{color:var(--red)}
-.finishrow .btn{padding:8px 13px}
-.finishrow .btn.done{background:var(--brass);color:#FFF9E8;border-color:var(--brass);font-weight:700}
-.leftgrid{display:grid;grid-template-columns:1fr 108px;gap:6px 8px;align-items:center}
-.leftgrid .lbl{font-size:14px}
-.leftgrid .lbl small{display:block;color:var(--ink-soft);font-size:12px}
-.leftgrid .lbl.penal{color:var(--red);font-weight:600}
-
-/* ---------- went out ---------- */
-.outpick{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.outpick button{
-  border:1px solid var(--stock-edge);background:var(--stock-sunk);border-radius:5px;
-  padding:11px 8px;font-size:14px;color:var(--ink);
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+header.top .inner {
+  max-width: 640px;
+  margin: 0 auto;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
 }
-.outpick button[aria-pressed="true"]{background:var(--brass);color:#FFF9E8;border-color:var(--brass);font-weight:700}
 
-/* ---------- warnings ---------- */
-.warns{margin:10px 0 0;padding:0;list-style:none}
-.warns li{
-  font-size:13px;background:#FBF1D8;border-left:3px solid var(--brass);
-  padding:7px 10px;border-radius:0 4px 4px 0;margin-bottom:5px;color:#6B5310;line-height:1.35;
+h1.brand {
+  font-family: "Fraunces", Georgia, serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-size: 22px;
+  margin: 0;
+  letter-spacing: -0.01em;
+  color: var(--ink);
 }
-.warns li.bad{background:#FBE7E7;border-left-color:var(--red);color:#7C1220}
 
-/* ---------- tally bar ---------- */
-.tally{
-  position:fixed;left:0;right:0;bottom:0;z-index:20;
-  background:rgba(11,38,26,.96);
-  border-top:1px solid var(--baize-line);
-  backdrop-filter:saturate(1.4) blur(8px);
-  padding:9px 16px calc(9px + env(safe-area-inset-bottom));
+h1.brand span {
+  color: var(--primary);
 }
-.tally-in{max-width:640px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:center}
-.tallyteam .n{font-size:12px;color:rgba(246,241,228,.6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tallyteam .v{font-size:21px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
-.tallyteam .v.neg{color:#F09A9A}
-.save{
-  background:var(--brass);color:#241A00;font-weight:700;font-size:15px;
-  padding:11px 16px;border-radius:10px;white-space:nowrap;
+
+.count-pill {
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  white-space: nowrap;
 }
-.save.ghost{background:transparent;color:var(--brass-soft);border:1px solid var(--baize-line);font-weight:500}
-.tallyteam.done .v{color:#8FD8AC}
-.tallyteam .tick{color:#5FC98A}
-.save[disabled]{opacity:.4}
 
-/* ---------- history ---------- */
-.totals{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
-.totbox{background:var(--stock);color:var(--ink);border-radius:14px;padding:12px 13px;
-  border:1px solid var(--stock-edge);box-shadow:0 8px 20px rgba(0,0,0,.28)}
-.totbox .n{font-family:var(--font-card);font-weight:700;font-size:14px;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.totbox .v{font-size:30px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.02em;line-height:1.15}
-.totbox .v.neg{color:var(--red)}
-.totbox.lead{border-color:var(--brass);box-shadow:0 8px 20px rgba(0,0,0,.28),inset 0 0 0 2px var(--brass)}
-.round{background:var(--stock);color:var(--ink);border:1px solid var(--stock-edge);
-  border-radius:14px;margin-bottom:9px;overflow:hidden}
-.round summary{list-style:none;cursor:pointer;padding:11px 13px;display:grid;
-  grid-template-columns:1fr auto auto;gap:12px;align-items:baseline}
-.round summary::-webkit-details-marker{display:none}
-.round .hn{font-family:var(--font-card);font-weight:700;font-size:14px}
-.round .hs{font-variant-numeric:tabular-nums;font-weight:600;font-size:15px}
-.round .hs.neg{color:var(--red)}
-.round .body{padding:0 13px 12px;border-top:1px solid var(--stock-edge)}
-.bd{font-size:13px;margin:10px 0 0}
-.bd h4{font-family:var(--font-card);font-size:13px;margin:0 0 4px}
-.bd table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
-.bd td{padding:2px 0;vertical-align:top}
-.bd td.r{text-align:right;white-space:nowrap}
-.bd tr.sum td{border-top:1px solid var(--stock-edge);font-weight:700;padding-top:4px}
-.empty{background:rgba(246,241,228,.05);border:1px dashed var(--baize-line);border-radius:14px;
-  padding:26px 18px;text-align:center;color:rgba(246,241,228,.72);font-size:14px}
-.empty .mark{display:block;margin:0 auto 12px;color:rgba(246,241,228,.22)}
+section { margin-top: 28px; }
 
-/* ---------- setup ---------- */
-.field{margin-bottom:12px}
-.field label{display:block;font-size:13px;color:var(--ink-soft);margin-bottom:4px}
-.field input{width:100%;padding:10px;border:1px solid var(--stock-edge);border-radius:5px;
-  background:var(--stock-sunk);color:var(--ink)}
-.rules{display:grid;grid-template-columns:1fr 92px;gap:6px 8px;align-items:center;font-size:14px}
-.rules input{padding:8px;border:1px solid var(--stock-edge);border-radius:5px;
-  background:var(--stock-sunk);color:var(--ink);text-align:right;font-variant-numeric:tabular-nums;width:100%}
-.btnrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
-.btn{border:1px solid var(--stock-edge);background:var(--stock-sunk);border-radius:5px;
-  padding:10px 14px;font-size:14px;color:var(--ink)}
-.btn.warn{color:var(--red);border-color:#E8C9CD}
-.banner{background:#FBE7E7;color:#7C1220;border-radius:5px;padding:9px 11px;font-size:13px;
-  margin-bottom:12px;line-height:1.35}
-.banner.calm{background:rgba(246,241,228,.07);color:rgba(246,241,228,.8);border:1px solid var(--baize-line)}
-.syncline{display:flex;align-items:center;gap:7px;font-size:12.5px;
-  color:rgba(246,241,228,.66);margin:0 0 11px;min-height:18px}
-.dot{width:8px;height:8px;border-radius:50%;background:#8A9C92;flex:0 0 auto}
-.dot.live{background:#5FC98A}
-.dot.off{background:#D9A441}
-.dot.local{background:#8A9C92}
-.readonly{position:relative}
-.readonly::after{content:"";position:absolute;inset:0;background:rgba(246,241,228,.45);
-  border-radius:6px;cursor:not-allowed}
-.whoami{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:4px}
-.whoami button{border:1px solid var(--stock-edge);background:var(--stock-sunk);border-radius:5px;
-  padding:9px 6px;font-size:13px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.whoami button[aria-pressed="true"]{background:var(--brass);color:#FFF9E8;border-color:var(--brass);font-weight:700}
-.toast{position:fixed;left:50%;bottom:88px;transform:translateX(-50%);z-index:40;
-  background:var(--ink);color:var(--stock);padding:9px 15px;border-radius:20px;font-size:14px;
-  box-shadow:0 6px 18px rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .18s}
-.toast.on{opacity:1}
+.section-head-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
 
-/* In-page confirmation. Native confirm() is silently swallowed inside the
-   Artifact sandbox, so every yes/no has to be built as an overlay. */
-.scrim{position:fixed;inset:0;z-index:50;background:rgba(6,22,15,.72);
-  display:none;align-items:center;justify-content:center;padding:22px}
-.scrim.on{display:flex}
-.dialog{background:var(--stock);color:var(--ink);border-radius:8px;padding:18px;
-  max-width:380px;width:100%;box-shadow:0 18px 44px rgba(0,0,0,.5)}
-.dialog h3{font-family:var(--font-card);font-size:16px;margin:0 0 6px}
-.dialog p{font-size:14px;color:var(--ink-soft);margin:0 0 16px;line-height:1.4}
-.dialog .btnrow{justify-content:flex-end}
-.dialog .go{background:var(--red);color:#FFF3F3;border-color:var(--red);font-weight:700}
-@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.collapse-toggle {
+  flex: none;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 12.5px;
+  color: var(--primary);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 6px 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  margin-top: 2px;
+}
+
+h2.section-title {
+  font-family: "Fraunces", Georgia, serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-size: 19px;
+  margin: 0 0 4px;
+  letter-spacing: -0.005em;
+}
+
+p.section-sub {
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-size: 13.5px;
+}
+
+.list-section {
+  margin-top: 32px;
+  margin-left: -16px;
+  margin-right: -16px;
+}
+
+.list-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--primary);
+  color: var(--primary-ink);
+  padding: 14px 16px;
+  border-radius: 14px 14px 0 0;
+  font-family: "Fraunces", Georgia, serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-size: 20px;
+  letter-spacing: -0.005em;
+}
+
+.list-banner-icon { font-size: 21px; }
+
+.list-panel {
+  background: color-mix(in srgb, var(--primary) 6%, var(--surface));
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 14px 14px;
+  padding: 14px 16px 18px;
+}
+
+.list-panel p.section-sub { margin-top: -2px; }
+
+.recipe-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.recipe-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.recipe-row input[type="checkbox"] {
+  width: 22px;
+  height: 22px;
+  flex: none;
+  accent-color: var(--primary);
+}
+
+.recipe-row .meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.recipe-row .name {
+  font-weight: 600;
+  font-size: 15.5px;
+  color: var(--ink);
+}
+
+.recipe-row .time {
+  font-size: 12.5px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  margin-top: 1px;
+}
+
+.recipe-row.selected {
+  border-color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 8%, var(--surface));
+}
+
+.cat-group { margin-bottom: 18px; }
+
+.cat-group h3 {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin: 0 0 8px;
+}
+
+.item-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px;
+  border-bottom: 1px solid var(--border);
+}
+
+.item-row:last-child { border-bottom: none; }
+
+.item-row .tap-area {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 9px 4px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.item-row input[type="checkbox"] {
+  width: 21px;
+  height: 21px;
+  flex: none;
+  margin-top: 2px;
+  accent-color: var(--primary);
+}
+
+.item-row .text {
+  flex: 1;
+  min-width: 0;
+}
+
+.item-row .name {
+  font-size: 15px;
+  color: var(--ink);
+}
+
+.item-row.checked .name {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+
+.item-row .qty {
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.item-row .del {
+  flex: none;
+  border: none;
+  background: none;
+  color: var(--muted);
+  font-size: 18px;
+  line-height: 1;
+  padding: 4px 6px;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.item-row .del:hover { background: var(--surface-2); color: var(--ink); }
+
+.empty-note {
+  color: var(--muted);
+  font-size: 14px;
+  background: var(--surface);
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  padding: 18px;
+  text-align: center;
+}
+
+form.add-item {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+form.add-item input[type="text"] {
+  flex: 1;
+  min-width: 0;
+  font-size: 15px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--ink);
+  font-family: inherit;
+}
+
+form.add-item input[type="text"]:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: 1px;
+}
+
+select.cat-select {
+  font-size: 13px;
+  padding: 10px 8px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--ink);
+  font-family: inherit;
+  max-width: 120px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  select.cat-select-guessed {
+    animation: cat-guess-pulse 0.6s ease-out;
+  }
+  @keyframes cat-guess-pulse {
+    0% { background: color-mix(in srgb, var(--primary) 35%, var(--surface)); border-color: var(--primary); }
+    100% { background: var(--surface); border-color: var(--border); }
+  }
+}
+
+button.btn {
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 14.5px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  padding: 10px 16px;
+  cursor: pointer;
+}
+
+button.btn:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+button.btn.primary { background: var(--accent); color: var(--accent-ink); }
+button.btn.primary:active { opacity: 0.85; }
+
+button.btn.ghost {
+  background: var(--surface);
+  color: var(--ink);
+  border-color: var(--border);
+}
+
+button.btn.ghost:active { background: var(--surface-2); }
+
+footer.util {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
+  z-index: 20;
+}
+
+footer.util .inner {
+  max-width: 640px;
+  margin: 0 auto;
+  display: flex;
+  gap: 8px;
+}
+
+footer.util button.btn { flex: 1; }
+
+.confirm-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 26, 20, 0.5);
+  z-index: 50;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.confirm-overlay.open { display: flex; }
+
+.confirm-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  max-width: 340px;
+  width: 100%;
+  box-shadow: var(--shadow);
+}
+
+.confirm-text {
+  margin: 0 0 16px;
+  color: var(--ink);
+  font-size: 14.5px;
+  line-height: 1.5;
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.confirm-actions .btn { flex: 1; }
+
+.sync-flag {
+  font-size: 11.5px;
+  color: var(--muted);
+  text-align: center;
+  margin: 4px 0 0;
+  min-height: 14px;
+}
+
+.sync-flag-warn {
+  color: var(--accent);
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .recipe-row, .item-row .name { transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease; }
+}
 </style>
-</head>
-<body>
-
-<header class="masthead">
-  <div class="mast-in">
-    <div class="mast-left">
-      <p class="wordmark-text">9 Deck <b>Scorepad</b></p>
-      <nav class="tabs" role="tablist">
-        <button class="tab" role="tab" id="tab-round" aria-selected="true" data-panel="round">Round</button>
-        <button class="tab" role="tab" id="tab-history" aria-selected="false" data-panel="history">History</button>
-        <button class="tab" role="tab" id="tab-setup" aria-selected="false" data-panel="setup">Setup</button>
-      </nav>
-    </div>
-    <svg class="mark" width="50" height="79" viewBox="0 0 500 790" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><path fill-rule="evenodd" fill="currentColor" d="M 379 609.5 L 120 609.5 L 119 608.5 L 109 608.5 L 96 604.5 L 92 604.5 L 82 600.5 L 71 595.5 L 58 587.5 L 42.5 574 L 31.5 561 L 21.5 545 L 19.5 538 L 14.5 528 L 9.5 506 L 9.5 494 L 8.5 493 L 9 439.5 L 140 439.5 L 141.5 454 L 143.5 461 L 146.5 468 L 153.5 477 L 166 485.5 L 174 488.5 L 180 488.5 L 181 489.5 L 318 489.5 L 319 488.5 L 325 488.5 L 338 482.5 L 346.5 475 L 354.5 462 L 357.5 448 L 357.5 410 L 356.5 409 L 355.5 399 L 350.5 389 L 342 379.5 L 335 374.5 L 326 370.5 L 321 370.5 L 320 369.5 L 125 369.5 L 124 368.5 L 107 367.5 L 88 362.5 L 76 357.5 L 62 349.5 L 49 339.5 L 30.5 319 L 22.5 306 L 15.5 290 L 9.5 266 L 9.5 254 L 8.5 253 L 8.5 126 L 9.5 112 L 14.5 90 L 23.5 70 L 30.5 59 L 49 38.5 L 56 32.5 L 70 23.5 L 90 14.5 L 111 9.5 L 123 9.5 L 124 8.5 L 375 8.5 L 376 9.5 L 388 9.5 L 411 15.5 L 425 21.5 L 440 30.5 L 456.5 45 L 467.5 58 L 476.5 73 L 484.5 93 L 488.5 109 L 488.5 120 L 489.5 121 L 489.5 497 L 488.5 498 L 488.5 509 L 483.5 529 L 475.5 547 L 467.5 560 L 452 577.5 L 440 587.5 L 424 597.5 L 406 604.5 L 390 608.5 L 380 608.5 Z M 314.5 249 L 329 246.5 L 337 242.5 L 345 236.5 L 351.5 228 L 356.5 215 L 356.5 209 L 357.5 208 L 357.5 170 L 356.5 169 L 356.5 162 L 351.5 150 L 345.5 142 L 336 134.5 L 327 130.5 L 316 129.5 L 315 128.5 L 184 128.5 L 183 129.5 L 172 130.5 L 161 135.5 L 147.5 149 L 142.5 160 L 141.5 171 L 140.5 172 L 140.5 206 L 141.5 207 L 141.5 213 L 142.5 218 L 147.5 229 L 156 238.5 L 163 243.5 L 172 247.5 L 183 248.5 L 184 249.5 Z M 304.17 748.58 L 290.33 748.42 L 281.33 747.25 L 272.5 744.75 L 267.83 742.75 L 263.33 739.92 L 256.08 733.33 L 249.42 724.67 L 245.08 715.67 L 242.58 706 L 241.42 693.83 L 242.08 679.17 L 244.92 666.5 L 248.42 658.5 L 254.25 650.33 L 261.5 643.75 L 270.67 638.42 L 280.83 635.25 L 289.83 633.92 L 306.17 633.92 L 319.17 636.42 L 326.17 639.25 L 334 644.75 L 339.25 650.33 L 343.58 656.67 L 348.42 667.83 L 348.33 668.58 L 347 668.92 L 318 675.08 L 315.42 668.83 L 310.17 663.25 L 303.67 660.25 L 296.83 659.58 L 293.33 660.08 L 287.5 662.25 L 283.25 665.67 L 280.08 669.83 L 277.75 675.33 L 276.42 681.67 L 275.92 688 L 276.42 700.67 L 278.08 709 L 279.42 712.5 L 281.42 715.67 L 286.5 720.08 L 289.83 721.58 L 296.67 722.75 L 301.5 722.42 L 307.5 720.58 L 310.17 718.92 L 314.75 713.5 L 317.25 708.17 L 319.33 701.08 L 349.42 710.17 L 347.08 718.83 L 344.08 725.33 L 338.08 734 L 333 738.75 L 328.17 742.25 L 320.17 745.92 L 315 747.25 Z M 66.33 746.75 L 13.58 746.67 L 13.67 635.58 L 67.17 635.58 L 74.17 635.92 L 82.33 637.25 L 91 640.42 L 98.5 645.42 L 104.08 651 L 109.92 660 L 113.75 671.17 L 115.75 685.33 L 115.75 697.5 L 114.42 709.67 L 112.75 716.33 L 109.92 722.83 L 107.75 726.5 L 102.08 733.5 L 92.83 740.75 L 87.17 743.25 L 82.33 744.58 L 74.5 746.08 Z M 227.17 746.75 L 133.58 746.67 L 133.67 635.58 L 225.58 635.67 L 225.5 659.42 L 168.08 659.67 L 168.33 676.92 L 221.42 677 L 221.33 699.75 L 168.33 699.75 L 168.08 721.17 L 227.17 721.42 Z M 483.33 746.75 L 441.33 746.75 L 418.33 701.75 L 416.42 703 L 400.58 719.67 L 400.5 746.75 L 366.17 746.75 L 366.08 635.67 L 400.58 635.67 L 400.58 676.33 L 401.33 676.42 L 436.17 635.58 L 481.33 635.58 L 481.42 636.33 L 479.42 638.5 L 443.92 675 L 441.75 678 L 483.42 745.83 Z M 61.08 721.17 L 66.5 720.58 L 72.17 718.58 L 75.75 715.5 L 78.92 710 L 80.75 702.17 L 81.25 694.67 L 80.92 683.17 L 80.08 677.83 L 78.42 672.17 L 76.08 668.17 L 73.17 665.25 L 70.67 663.75 L 62.33 661.25 L 48.33 660.92 L 48.08 721 Z"/></svg>
+</head><body>
+<div class="wrap" id="app-root"><div id="app"></div></div>
+<footer class="util"><div class="inner">
+  <button class="btn ghost" id="btn-uncheck" type="button">Uncheck all</button>
+  <button class="btn ghost" id="btn-reset" type="button">Start new list</button>
+</div><p class="sync-flag" id="sync-flag"></p></footer>
+<div class="confirm-overlay" id="confirm-overlay"><div class="confirm-card" role="alertdialog" aria-modal="true" aria-labelledby="confirm-text">
+  <p class="confirm-text" id="confirm-text">Start a new list? This clears selected meals, custom items, and checkmarks for everyone.</p>
+  <div class="confirm-actions">
+    <button class="btn ghost" id="confirm-cancel" type="button">Cancel</button>
+    <button class="btn primary" id="confirm-ok" type="button">Start new list</button>
   </div>
-</header>
+</div></div>
+<script id="app-script">
+(function () {
+  var CSS_TEXT = ":root {\n  --bg: #f2f4ec;\n  --surface: #ffffff;\n  --surface-2: #eaeee0;\n  --ink: #1e2a1e;\n  --muted: #5b6558;\n  --border: #dbe1cf;\n  --primary: #2f5f42;\n  --primary-ink: #ffffff;\n  --accent: #e2532b;\n  --accent-ink: #ffffff;\n  --good: #2f5f42;\n  --shadow: 0 1px 2px rgba(30, 42, 30, 0.06), 0 6px 16px -8px rgba(30, 42, 30, 0.18);\n  color-scheme: light;\n}\n\n@media (prefers-color-scheme: dark) {\n  :root:not([data-theme=\"light\"]) {\n    --bg: #131d16;\n    --surface: #1b2720;\n    --surface-2: #223028;\n    --ink: #eaf1e6;\n    --muted: #9bb09d;\n    --border: #2b3a30;\n    --primary: #7fc08e;\n    --primary-ink: #0e1a10;\n    --accent: #ff7d52;\n    --accent-ink: #241006;\n    --good: #7fc08e;\n    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 20px -8px rgba(0, 0, 0, 0.5);\n    color-scheme: dark;\n  }\n}\n\n:root[data-theme=\"dark\"] {\n  --bg: #131d16;\n  --surface: #1b2720;\n  --surface-2: #223028;\n  --ink: #eaf1e6;\n  --muted: #9bb09d;\n  --border: #2b3a30;\n  --primary: #7fc08e;\n  --primary-ink: #0e1a10;\n  --accent: #ff7d52;\n  --accent-ink: #241006;\n  --good: #7fc08e;\n  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 20px -8px rgba(0, 0, 0, 0.5);\n  color-scheme: dark;\n}\n\n* { box-sizing: border-box; }\n\nhtml, body {\n  margin: 0;\n  padding: 0;\n  background: var(--bg);\n  color: var(--ink);\n}\n\nbody {\n  font-family: \"Public Sans\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif;\n  font-size: 16px;\n  line-height: 1.45;\n  -webkit-font-smoothing: antialiased;\n  padding-bottom: 96px;\n}\n\n.wrap {\n  max-width: 640px;\n  margin: 0 auto;\n  padding: 0 16px;\n}\n\nheader.top {\n  position: sticky;\n  top: 0;\n  z-index: 20;\n  background: var(--bg);\n  border-bottom: 1px solid var(--border);\n  padding: 14px 16px 12px;\n}\n\nheader.top .inner {\n  max-width: 640px;\n  margin: 0 auto;\n  display: flex;\n  align-items: baseline;\n  justify-content: space-between;\n  gap: 12px;\n}\n\nh1.brand {\n  font-family: \"Fraunces\", Georgia, serif;\n  font-optical-sizing: auto;\n  font-weight: 600;\n  font-size: 22px;\n  margin: 0;\n  letter-spacing: -0.01em;\n  color: var(--ink);\n}\n\nh1.brand span {\n  color: var(--primary);\n}\n\n.count-pill {\n  font-variant-numeric: tabular-nums;\n  font-size: 13px;\n  font-weight: 600;\n  color: var(--muted);\n  white-space: nowrap;\n}\n\nsection { margin-top: 28px; }\n\n.section-head-row {\n  display: flex;\n  align-items: flex-start;\n  justify-content: space-between;\n  gap: 12px;\n}\n\n.collapse-toggle {\n  flex: none;\n  font-family: inherit;\n  font-weight: 600;\n  font-size: 12.5px;\n  color: var(--primary);\n  background: var(--surface-2);\n  border: 1px solid var(--border);\n  border-radius: 999px;\n  padding: 6px 12px;\n  cursor: pointer;\n  white-space: nowrap;\n  margin-top: 2px;\n}\n\nh2.section-title {\n  font-family: \"Fraunces\", Georgia, serif;\n  font-optical-sizing: auto;\n  font-weight: 600;\n  font-size: 19px;\n  margin: 0 0 4px;\n  letter-spacing: -0.005em;\n}\n\np.section-sub {\n  margin: 0 0 12px;\n  color: var(--muted);\n  font-size: 13.5px;\n}\n\n.list-section {\n  margin-top: 32px;\n  margin-left: -16px;\n  margin-right: -16px;\n}\n\n.list-banner {\n  display: flex;\n  align-items: center;\n  gap: 10px;\n  background: var(--primary);\n  color: var(--primary-ink);\n  padding: 14px 16px;\n  border-radius: 14px 14px 0 0;\n  font-family: \"Fraunces\", Georgia, serif;\n  font-optical-sizing: auto;\n  font-weight: 600;\n  font-size: 20px;\n  letter-spacing: -0.005em;\n}\n\n.list-banner-icon { font-size: 21px; }\n\n.list-panel {\n  background: color-mix(in srgb, var(--primary) 6%, var(--surface));\n  border: 1px solid var(--border);\n  border-top: none;\n  border-radius: 0 0 14px 14px;\n  padding: 14px 16px 18px;\n}\n\n.list-panel p.section-sub { margin-top: -2px; }\n\n.recipe-list {\n  display: flex;\n  flex-direction: column;\n  gap: 8px;\n}\n\n.recipe-row {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  background: var(--surface);\n  border: 1px solid var(--border);\n  border-radius: 12px;\n  padding: 12px 14px;\n  box-shadow: var(--shadow);\n  cursor: pointer;\n  -webkit-tap-highlight-color: transparent;\n}\n\n.recipe-row input[type=\"checkbox\"] {\n  width: 22px;\n  height: 22px;\n  flex: none;\n  accent-color: var(--primary);\n}\n\n.recipe-row .meta {\n  flex: 1;\n  min-width: 0;\n}\n\n.recipe-row .name {\n  font-weight: 600;\n  font-size: 15.5px;\n  color: var(--ink);\n}\n\n.recipe-row .time {\n  font-size: 12.5px;\n  color: var(--muted);\n  font-variant-numeric: tabular-nums;\n  margin-top: 1px;\n}\n\n.recipe-row.selected {\n  border-color: var(--primary);\n  background: color-mix(in srgb, var(--primary) 8%, var(--surface));\n}\n\n.cat-group { margin-bottom: 18px; }\n\n.cat-group h3 {\n  font-size: 12px;\n  font-weight: 700;\n  text-transform: uppercase;\n  letter-spacing: 0.08em;\n  color: var(--muted);\n  margin: 0 0 8px;\n}\n\n.item-row {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  padding: 2px;\n  border-bottom: 1px solid var(--border);\n}\n\n.item-row:last-child { border-bottom: none; }\n\n.item-row .tap-area {\n  flex: 1;\n  min-width: 0;\n  display: flex;\n  align-items: flex-start;\n  gap: 12px;\n  padding: 9px 4px;\n  cursor: pointer;\n  -webkit-tap-highlight-color: transparent;\n}\n\n.item-row input[type=\"checkbox\"] {\n  width: 21px;\n  height: 21px;\n  flex: none;\n  margin-top: 2px;\n  accent-color: var(--primary);\n}\n\n.item-row .text {\n  flex: 1;\n  min-width: 0;\n}\n\n.item-row .name {\n  font-size: 15px;\n  color: var(--ink);\n}\n\n.item-row.checked .name {\n  color: var(--muted);\n  text-decoration: line-through;\n}\n\n.item-row .qty {\n  font-size: 12.5px;\n  color: var(--muted);\n}\n\n.item-row .del {\n  flex: none;\n  border: none;\n  background: none;\n  color: var(--muted);\n  font-size: 18px;\n  line-height: 1;\n  padding: 4px 6px;\n  cursor: pointer;\n  border-radius: 6px;\n}\n\n.item-row .del:hover { background: var(--surface-2); color: var(--ink); }\n\n.empty-note {\n  color: var(--muted);\n  font-size: 14px;\n  background: var(--surface);\n  border: 1px dashed var(--border);\n  border-radius: 12px;\n  padding: 18px;\n  text-align: center;\n}\n\nform.add-item {\n  display: flex;\n  gap: 8px;\n  margin-top: 14px;\n}\n\nform.add-item input[type=\"text\"] {\n  flex: 1;\n  min-width: 0;\n  font-size: 15px;\n  padding: 10px 12px;\n  border: 1px solid var(--border);\n  border-radius: 10px;\n  background: var(--surface);\n  color: var(--ink);\n  font-family: inherit;\n}\n\nform.add-item input[type=\"text\"]:focus {\n  outline: 2px solid var(--primary);\n  outline-offset: 1px;\n}\n\nselect.cat-select {\n  font-size: 13px;\n  padding: 10px 8px;\n  border: 1px solid var(--border);\n  border-radius: 10px;\n  background: var(--surface);\n  color: var(--ink);\n  font-family: inherit;\n  max-width: 120px;\n}\n\n@media (prefers-reduced-motion: no-preference) {\n  select.cat-select-guessed {\n    animation: cat-guess-pulse 0.6s ease-out;\n  }\n  @keyframes cat-guess-pulse {\n    0% { background: color-mix(in srgb, var(--primary) 35%, var(--surface)); border-color: var(--primary); }\n    100% { background: var(--surface); border-color: var(--border); }\n  }\n}\n\nbutton.btn {\n  font-family: inherit;\n  font-weight: 600;\n  font-size: 14.5px;\n  border-radius: 10px;\n  border: 1px solid transparent;\n  padding: 10px 16px;\n  cursor: pointer;\n}\n\nbutton.btn:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }\n\nbutton.btn.primary { background: var(--accent); color: var(--accent-ink); }\nbutton.btn.primary:active { opacity: 0.85; }\n\nbutton.btn.ghost {\n  background: var(--surface);\n  color: var(--ink);\n  border-color: var(--border);\n}\n\nbutton.btn.ghost:active { background: var(--surface-2); }\n\nfooter.util {\n  position: fixed;\n  left: 0; right: 0; bottom: 0;\n  background: var(--bg);\n  border-top: 1px solid var(--border);\n  padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));\n  z-index: 20;\n}\n\nfooter.util .inner {\n  max-width: 640px;\n  margin: 0 auto;\n  display: flex;\n  gap: 8px;\n}\n\nfooter.util button.btn { flex: 1; }\n\n.confirm-overlay {\n  display: none;\n  position: fixed;\n  inset: 0;\n  background: rgba(20, 26, 20, 0.5);\n  z-index: 50;\n  align-items: center;\n  justify-content: center;\n  padding: 20px;\n}\n\n.confirm-overlay.open { display: flex; }\n\n.confirm-card {\n  background: var(--surface);\n  border: 1px solid var(--border);\n  border-radius: 14px;\n  padding: 20px;\n  max-width: 340px;\n  width: 100%;\n  box-shadow: var(--shadow);\n}\n\n.confirm-text {\n  margin: 0 0 16px;\n  color: var(--ink);\n  font-size: 14.5px;\n  line-height: 1.5;\n}\n\n.confirm-actions {\n  display: flex;\n  gap: 8px;\n}\n\n.confirm-actions .btn { flex: 1; }\n\n.sync-flag {\n  font-size: 11.5px;\n  color: var(--muted);\n  text-align: center;\n  margin: 4px 0 0;\n  min-height: 14px;\n}\n\n.sync-flag-warn {\n  color: var(--accent);\n  font-weight: 600;\n  cursor: pointer;\n  text-decoration: underline;\n  text-underline-offset: 2px;\n}\n\n@media (prefers-reduced-motion: no-preference) {\n  .recipe-row, .item-row .name { transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease; }\n}\n";
+  var RECIPES = [{"name":"Chicken Enchiladas","time":"65 min","ingredients":[{"ingredient":"Vegetable oil","qty":"1/4 cup","category":"Pantry & Oils"},{"ingredient":"Corn tortillas (6 inch)","qty":"12.0","category":"Bakery & Bread"},{"ingredient":"White onion","qty":"1/2 medium","category":"Produce"},{"ingredient":"Poblano pepper","qty":"1 medium","category":"Produce"},{"ingredient":"Garlic cloves","qty":"3 cloves","category":"Produce"},{"ingredient":"Tomatoes","qty":"2 large","category":"Produce"},{"ingredient":"Cooked chicken (shredded)","qty":"2 cups","category":"Meat & Seafood"},{"ingredient":"Enchilada sauce","qty":"2 1/2 cups","category":"Pantry & Canned Goods"}]},{"name":"Miso Salmon Bowls","time":"35 min","ingredients":[{"ingredient":"White or brown rice","qty":"2 cups","category":"Pantry & Grains"},{"ingredient":"White miso paste","qty":"3 tbsp","category":"Condiments & Sauces"},{"ingredient":"Honey","qty":"2 tbsp","category":"Pantry & Baking"},{"ingredient":"Vegetable oil","qty":"1 tbsp","category":"Pantry & Oils"},{"ingredient":"Fresh ginger (grated)","qty":"1 tbsp","category":"Produce"},{"ingredient":"Salmon fillets (6-8 oz each)","qty":"4 fillets","category":"Meat & Seafood"},{"ingredient":"Scallions / green onions","qty":"4 stalks","category":"Produce"},{"ingredient":"Optional sides (seaweed, cucumber, radish, avocado)","qty":"To taste","category":"Produce"}]},{"name":"Sheet Pan Chicken with Potatoes, Arugula, and Garlic Yogurt","time":"1 hr + marinating","ingredients":[{"ingredient":"Chicken thighs and drumsticks","qty":"1.5 lbs","category":"Meat & Seafood"},{"ingredient":"Yukon gold potatoes","qty":"1 1/4 lbs","category":"Produce"},{"ingredient":"Harissa or sriracha","qty":"2 tbsp","category":"Condiments & Sauces"},{"ingredient":"Leeks","qty":"2.0","category":"Produce"},{"ingredient":"Lemon (for zest & juice)","qty":"1 lemon","category":"Produce"},{"ingredient":"Plain yogurt (not Greek)","qty":"1/3 cup","category":"Dairy & Refrigerated"},{"ingredient":"Garlic clove","qty":"1 clove","category":"Produce"},{"ingredient":"Baby arugula","qty":"2 oz","category":"Produce"},{"ingredient":"Fresh dill","qty":"As needed","category":"Produce"}]},{"name":"Roasted Lemon Chicken Thighs and Potatoes","time":"1.5 hr, mostly downtime","ingredients":[{"ingredient":"Fresh lemons (juiced, ~4 lemons)","qty":"1/2 cup juice","category":"Produce"},{"ingredient":"Olive oil","qty":"1/2 cup","category":"Pantry & Oils"},{"ingredient":"Salt","qty":"2 tsp","category":"Spices & Seasonings"},{"ingredient":"Garlic cloves (grated)","qty":"6 cloves","category":"Produce"},{"ingredient":"Dried oregano","qty":"1 tbsp","category":"Spices & Seasonings"},{"ingredient":"Black pepper","qty":"1/2 tsp","category":"Spices & Seasonings"},{"ingredient":"Yukon gold potatoes (wedges)","qty":"2 lbs","category":"Produce"},{"ingredient":"Bone-in, skin-on chicken thighs","qty":"6 thighs (~2 lbs)","category":"Meat & Seafood"},{"ingredient":"Chicken stock","qty":"1/4 cup","category":"Pantry & Canned Goods"},{"ingredient":"Fresh parsley (chopped)","qty":"2 tbsp","category":"Produce"},{"ingredient":"Fresh dill (chopped)","qty":"2 tbsp","category":"Produce"}]},{"name":"Skillet Chicken Potpie","time":"1.5 hr","ingredients":[{"ingredient":"Bone-in, skin-on chicken breasts/thighs","qty":"2 lbs","category":"Meat & Seafood"},{"ingredient":"Carrots","qty":"3 small","category":"Produce"},{"ingredient":"Celery stalks","qty":"3 stalks","category":"Produce"},{"ingredient":"Garlic cloves","qty":"2 cloves","category":"Produce"},{"ingredient":"Yellow onion","qty":"1 medium","category":"Produce"},{"ingredient":"Fresh thyme","qty":"1 tbsp","category":"Produce"},{"ingredient":"All-purpose flour","qty":"1/3 cup","category":"Pantry & Baking"},{"ingredient":"Low sodium chicken stock","qty":"3 cups","category":"Pantry & Canned Goods"},{"ingredient":"Frozen peas","qty":"1 cup","category":"Frozen"},{"ingredient":"Fresh parsley","qty":"1/4 cup","category":"Produce"},{"ingredient":"Frozen puff pastry sheets","qty":"1 (12-14oz) or 2 (8.5oz)","category":"Frozen"},{"ingredient":"Egg","qty":"1 large","category":"Dairy & Refrigerated"}]},{"name":"Chicken Soup with Toasted Farro and Greens","time":"45 min","ingredients":[{"ingredient":"Leeks","qty":"2 medium","category":"Produce"},{"ingredient":"Carrots","qty":"2 medium","category":"Produce"},{"ingredient":"Celery stalk","qty":"1 stalk","category":"Produce"},{"ingredient":"Garlic cloves","qty":"3 cloves","category":"Produce"},{"ingredient":"Fennel seeds","qty":"1 tsp","category":"Spices & Seasonings"},{"ingredient":"Red pepper flakes","qty":"1/2 tsp","category":"Spices & Seasonings"},{"ingredient":"Farro","qty":"1 cup","category":"Pantry & Grains"},{"ingredient":"Low sodium chicken stock","qty":"6 cups","category":"Pantry & Canned Goods"},{"ingredient":"Boneless, skinless chicken thighs","qty":"3/4 lb","category":"Meat & Seafood"},{"ingredient":"Kale or Swiss chard","qty":"5 cups","category":"Produce"},{"ingredient":"Crusty bread","qty":"1 loaf","category":"Bakery & Bread"},{"ingredient":"Lemon (for zest)","qty":"1 lemon","category":"Produce"}]},{"name":"Tuscan Style Chicken Soup","time":"45 min","ingredients":[{"ingredient":"Yellow onion","qty":"1 medium","category":"Produce"},{"ingredient":"Garlic cloves","qty":"2 cloves","category":"Produce"},{"ingredient":"Fresh thyme sprigs","qty":"2 sprigs","category":"Produce"},{"ingredient":"Celery stalk","qty":"1 stalk","category":"Produce"},{"ingredient":"Carrots","qty":"2 medium","category":"Produce"},{"ingredient":"Russet potatoes","qty":"2 medium","category":"Produce"},{"ingredient":"Chicken stock","qty":"4 cups","category":"Pantry & Canned Goods"},{"ingredient":"Cannellini beans (white kidney beans)","qty":"1 can (14 oz)","category":"Pantry & Canned Goods"},{"ingredient":"Cooked chicken breasts (boneless/skinless)","qty":"2 breasts","category":"Meat & Seafood"},{"ingredient":"Kale","qty":"3.5 oz","category":"Produce"},{"ingredient":"Fresh parsley","qty":"To taste","category":"Produce"},{"ingredient":"Crusty bread","qty":"1 loaf","category":"Bakery & Bread"}]},{"name":"Ground Beef Chili","time":"2.5 hr","ingredients":[{"ingredient":"Yellow onion","qty":"1 large","category":"Produce"},{"ingredient":"Garlic cloves","qty":"5 cloves","category":"Produce"},{"ingredient":"Poblano peppers","qty":"2 peppers","category":"Produce"},{"ingredient":"Serrano or jalape\u00f1o pepper","qty":"1 pepper","category":"Produce"},{"ingredient":"80/20 Ground beef","qty":"1 3/4 lbs","category":"Meat & Seafood"},{"ingredient":"Chili powder","qty":"2 tbsp","category":"Spices & Seasonings"},{"ingredient":"Smoked paprika","qty":"1 tbsp","category":"Spices & Seasonings"},{"ingredient":"Ground cumin","qty":"1 tbsp","category":"Spices & Seasonings"},{"ingredient":"Ground coriander","qty":"2 tsp","category":"Spices & Seasonings"},{"ingredient":"Cayenne pepper","qty":"1/4 tsp","category":"Spices & Seasonings"},{"ingredient":"Modelo beer","qty":"1 bottle (12 oz)","category":"Beverages"},{"ingredient":"Chicken stock","qty":"1 cup","category":"Pantry & Canned Goods"},{"ingredient":"Crushed tomatoes","qty":"1 can (28 oz)","category":"Pantry & Canned Goods"},{"ingredient":"Worcestershire sauce","qty":"1 tbsp","category":"Condiments & Sauces"},{"ingredient":"Bay leaves","qty":"2 leaves","category":"Spices & Seasonings"},{"ingredient":"Black beans","qty":"1 can (14.5 oz)","category":"Pantry & Canned Goods"},{"ingredient":"Optional toppings (shredded cheese, sour cream, tortilla chips)","qty":"As desired","category":"Dairy & Refrigerated"}]},{"name":"Honey Garlic Glazed Salmon","time":"20 min","ingredients":[{"ingredient":"Salmon fillets (6 oz each)","qty":"4 fillets","category":"Meat & Seafood"},{"ingredient":"Smoked paprika","qty":"1/2 tsp","category":"Spices & Seasonings"},{"ingredient":"Butter","qty":"3 tbsp","category":"Dairy & Refrigerated"},{"ingredient":"Garlic cloves","qty":"6 cloves","category":"Produce"},{"ingredient":"Honey","qty":"1/2 cup","category":"Pantry & Baking"},{"ingredient":"Soy sauce","qty":"3 tbsp","category":"Condiments & Sauces"},{"ingredient":"Sriracha sauce","qty":"1 tbsp","category":"Condiments & Sauces"},{"ingredient":"Lemon juice","qty":"2 tbsp","category":"Produce"},{"ingredient":"Sides (rice, green beans, or broccoli)","qty":"As desired","category":"Produce"}]},{"name":"Chicken Vesuvio","time":"1 hr","ingredients":[{"ingredient":"Whole chicken (cut into 8 bone-in parts)","qty":"1 (4-4.5 lbs)","category":"Meat & Seafood"},{"ingredient":"Kosher salt & black pepper","qty":"To taste","category":"Spices & Seasonings"},{"ingredient":"Olive oil","qty":"For drizzling","category":"Pantry & Oils"},{"ingredient":"Baby gold potatoes (halved)","qty":"18 oz","category":"Produce"},{"ingredient":"Garlic cloves (smashed)","qty":"6 cloves","category":"Produce"},{"ingredient":"Dried oregano","qty":"2 tsp","category":"Spices & Seasonings"},{"ingredient":"Fresh thyme sprigs","qty":"5 sprigs","category":"Produce"},{"ingredient":"Dry white wine","qty":"1/2 cup","category":"Beverages"},{"ingredient":"Low sodium chicken broth","qty":"1/3 cup","category":"Pantry & Canned Goods"},{"ingredient":"Lemon (zested and juiced)","qty":"1 lemon","category":"Produce"},{"ingredient":"Snap peas (cleaned and halved)","qty":"6 oz","category":"Produce"},{"ingredient":"Frozen peas","qty":"1/2 cup","category":"Frozen"},{"ingredient":"Fresh chives (sliced)","qty":"1/4 cup","category":"Produce"}]}];
+  var CATEGORY_ORDER = ["Produce","Meat & Seafood","Dairy & Refrigerated","Bakery & Bread","Frozen","Pantry & Grains","Pantry & Canned Goods","Pantry & Baking","Pantry & Oils","Condiments & Sauces","Spices & Seasonings","Beverages","Household & Personal Care","Other"];
 
-<main>
-  <!-- HAND -->
-  <section class="panel on" id="panel-round" role="tabpanel" aria-labelledby="tab-round">
-    <div id="storewarn"></div>
-    <p class="syncline" id="syncline"><span class="dot local"></span><span>Starting up</span></p>
-    <div class="teamswitch" id="teamswitch"></div>
-
-    <div class="sheet">
-      <h2 class="sheethead">Books on the table<span id="booksclaim"></span></h2>
-      <div class="grid" id="booksgrid"></div>
-      <ul class="warns" id="bookwarns"></ul>
-    </div>
-
-    <div class="sheet">
-      <h2 class="sheethead">Cards left unplayed<span id="leftclaim"></span></h2>
-      <p class="note">Every card still unplayed when the hand ends, across everyone on this team. Grouped by point value rather than rank.</p>
-      <div class="leftgrid" id="leftgrid"></div>
-    </div>
-
-    <div class="sheet">
-      <h2>Who went out?</h2>
-      <div class="outpick" id="outpick"></div>
-      <ul class="warns" id="roundwarns"></ul>
-    </div>
-
-    <div class="sheet">
-      <h2>Finishing the round</h2>
-      <p class="note">Each team commits when its counting is done — they don't have to finish together. The round closes on its own once both have.</p>
-      <div id="finish"></div>
-    </div>
-  </section>
-
-  <!-- HISTORY -->
-  <section class="panel" id="panel-history" role="tabpanel" aria-labelledby="tab-history">
-    <div class="totals" id="totals"></div>
-    <div id="roundlist"></div>
-  </section>
-
-  <!-- SETUP -->
-  <section class="panel" id="panel-setup" role="tabpanel" aria-labelledby="tab-setup">
-    <div class="sheet">
-      <h2>Teams</h2>
-      <div class="field"><label for="nameA">Team one</label><input id="nameA" maxlength="24"></div>
-      <div class="field"><label for="nameB">Team two</label><input id="nameB" maxlength="24"></div>
-      <div class="field">
-        <label>Which team are you keeping score for on this phone?</label>
-        <div class="whoami" id="whoami"></div>
-      </div>
-      <div class="field" style="margin-bottom:0">
-        <label>And which half of the count?</label>
-        <div class="whoami" id="whatami"></div>
-        <div class="btnrow" style="margin-top:10px"><button class="btn" id="stricttoggle"></button></div>
-        <p class="note" style="margin:8px 0 0" id="rolenote"></p>
-      </div>
-    </div>
-
-    <div class="sheet">
-      <h2>Shared game</h2>
-      <p class="note" id="syncnote"></p>
-      <div class="btnrow"><button class="btn" id="resync">Reconnect</button></div>
-    </div>
-
-    <div class="sheet">
-      <h2>Scoring rules</h2>
-      <p class="note">Change a value and every saved hand is re-scored from its stored card counts.</p>
-      <div class="rules" id="rulesgrid"></div>
-    </div>
-
-    <div class="sheet">
-      <h2>Your data</h2>
-      <p class="note">Everything lives on this device only. Export before clearing your browser, or to move a game to another phone.</p>
-      <div class="btnrow">
-        <button class="btn" id="expjson">Export backup</button>
-        <button class="btn" id="expcsv">Export spreadsheet</button>
-        <button class="btn" id="impbtn">Import backup</button>
-        <input type="file" id="impfile" accept="application/json,.json" hidden>
-      </div>
-      <div class="btnrow" style="margin-top:14px">
-        <button class="btn warn" id="newgame">Start a new game</button>
-      </div>
-      <p class="note" style="margin:14px 0 0" id="buildline"></p>
-    </div>
-  </section>
-</main>
-
-<div class="tally"><div class="tally-in" id="tallybar"></div></div>
-<div class="toast" id="toast"></div>
-
-<div class="scrim" id="scrim" role="dialog" aria-modal="true" aria-labelledby="dlgtitle">
-  <div class="dialog">
-    <h3 id="dlgtitle"></h3>
-    <p id="dlgbody"></p>
-    <div class="btnrow">
-      <button class="btn" id="dlgno">Cancel</button>
-      <button class="btn go" id="dlgyes">Confirm</button>
-    </div>
-  </div>
-</div>
-
-<script>
-"use strict";
-
-/* ============================================================
-   Storage — real localStorage when hosted, memory fallback so
-   the app still runs in sandboxed previews. Never silently lose
-   data without telling the user.
-   ============================================================ */
-var store = (function () {
-  var mem = {}, ok = false;
-  try { localStorage.setItem("__probe", "1"); localStorage.removeItem("__probe"); ok = true; }
-  catch (e) { ok = false; }
-  return {
-    durable: ok,
-    get: function (k) { try { return ok ? localStorage.getItem(k) : (k in mem ? mem[k] : null); } catch (e) { return k in mem ? mem[k] : null; } },
-    set: function (k, v) { try { if (ok) localStorage.setItem(k, v); else mem[k] = v; } catch (e) { mem[k] = v; } }
+  // ---- aisle-guessing keyword map (unchanged from the previous version) ----
+  var CATEGORY_KEYWORDS = {
+    'Produce': ['apple', 'banana', 'orange', 'grape', 'strawberr', 'blueberr', 'raspberr',
+      'blackberr', 'melon', 'lemon', 'lime', 'avocado', 'tomato', 'lettuce', 'spinach',
+      'cucumber', 'carrot', 'potato', 'onion', 'garlic', 'bell pepper', 'broccoli',
+      'cauliflower', 'mushroom', 'celery', 'cilantro', 'parsley', 'basil', 'ginger',
+      'kale', 'zucchini', 'sweet potato', 'green beans', 'asparagus', 'corn', 'fruit',
+      'vegetable', 'herbs', 'salad'],
+    'Meat & Seafood': ['chicken', 'beef', 'pork', 'turkey', 'bacon', 'sausage', 'ham',
+      'steak', 'ground beef', 'salmon', 'shrimp', 'tuna', 'fish', 'tilapia', 'cod',
+      'meat', 'seafood', 'lamb', 'deli'],
+    'Dairy & Refrigerated': ['milk', 'cheese', 'yogurt', 'butter', 'cream cheese',
+      'sour cream', 'cottage cheese', 'half and half', 'eggs', 'egg', 'creamer'],
+    'Bakery & Bread': ['bread', 'bagel', 'tortilla', 'bun', 'dinner roll', 'muffin',
+      'croissant', 'pita', 'baguette', 'pastry', 'donut'],
+    'Frozen': ['frozen', 'ice cream', 'popsicle', 'waffle'],
+    'Pantry & Grains': ['rice', 'pasta', 'spaghetti', 'noodle', 'quinoa', 'oats',
+      'oatmeal', 'cereal', 'flour', 'couscous', 'granola'],
+    'Pantry & Canned Goods': ['canned', 'can of', 'broth', 'stock', 'tomato sauce',
+      'soup', 'beans', 'chickpeas', 'crushed tomato'],
+    'Pantry & Baking': ['sugar', 'honey', 'baking powder', 'baking soda', 'vanilla extract',
+      'chocolate chip', 'cake mix', 'brown sugar', 'powdered sugar', 'yeast'],
+    'Pantry & Oils': ['olive oil', 'vegetable oil', 'cooking spray', 'canola oil', 'coconut oil'],
+    'Condiments & Sauces': ['ketchup', 'mustard', 'mayo', 'soy sauce', 'salsa', 'bbq sauce',
+      'hot sauce', 'dressing', 'vinegar', 'sriracha', 'worcestershire', 'jam', 'jelly',
+      'peanut butter'],
+    'Spices & Seasonings': ['salt', 'pepper', 'cinnamon', 'cumin', 'paprika', 'oregano',
+      'chili powder', 'garlic powder', 'onion powder', 'seasoning', 'spice', 'bay leaf'],
+    'Beverages': ['soda', 'juice', 'coffee', 'tea bags', 'beer', 'wine', 'sparkling water',
+      'bottled water', 'lemonade', 'seltzer'],
+    'Household & Personal Care': ['paper towel', 'toilet paper', 'napkin', 'dish soap',
+      'detergent', 'laundry', 'trash bag', 'ziploc', 'foil', 'plastic wrap', 'shampoo',
+      'conditioner', 'toothpaste', 'deodorant', 'batteries', 'light bulb', 'sponge',
+      'tissue', 'soap', 'paper plate', 'paper cup', 'diaper', 'cleaner']
   };
-})();
 
-var MARK_SVG = "<svg class=\"mark\" width=\"53\" height=\"84\" viewBox=\"0 0 500 790\" preserveAspectRatio=\"xMidYMid meet\" aria-hidden=\"true\"><path fill-rule=\"evenodd\" fill=\"currentColor\" d=\"M 379 609.5 L 120 609.5 L 119 608.5 L 109 608.5 L 96 604.5 L 92 604.5 L 82 600.5 L 71 595.5 L 58 587.5 L 42.5 574 L 31.5 561 L 21.5 545 L 19.5 538 L 14.5 528 L 9.5 506 L 9.5 494 L 8.5 493 L 9 439.5 L 140 439.5 L 141.5 454 L 143.5 461 L 146.5 468 L 153.5 477 L 166 485.5 L 174 488.5 L 180 488.5 L 181 489.5 L 318 489.5 L 319 488.5 L 325 488.5 L 338 482.5 L 346.5 475 L 354.5 462 L 357.5 448 L 357.5 410 L 356.5 409 L 355.5 399 L 350.5 389 L 342 379.5 L 335 374.5 L 326 370.5 L 321 370.5 L 320 369.5 L 125 369.5 L 124 368.5 L 107 367.5 L 88 362.5 L 76 357.5 L 62 349.5 L 49 339.5 L 30.5 319 L 22.5 306 L 15.5 290 L 9.5 266 L 9.5 254 L 8.5 253 L 8.5 126 L 9.5 112 L 14.5 90 L 23.5 70 L 30.5 59 L 49 38.5 L 56 32.5 L 70 23.5 L 90 14.5 L 111 9.5 L 123 9.5 L 124 8.5 L 375 8.5 L 376 9.5 L 388 9.5 L 411 15.5 L 425 21.5 L 440 30.5 L 456.5 45 L 467.5 58 L 476.5 73 L 484.5 93 L 488.5 109 L 488.5 120 L 489.5 121 L 489.5 497 L 488.5 498 L 488.5 509 L 483.5 529 L 475.5 547 L 467.5 560 L 452 577.5 L 440 587.5 L 424 597.5 L 406 604.5 L 390 608.5 L 380 608.5 Z M 314.5 249 L 329 246.5 L 337 242.5 L 345 236.5 L 351.5 228 L 356.5 215 L 356.5 209 L 357.5 208 L 357.5 170 L 356.5 169 L 356.5 162 L 351.5 150 L 345.5 142 L 336 134.5 L 327 130.5 L 316 129.5 L 315 128.5 L 184 128.5 L 183 129.5 L 172 130.5 L 161 135.5 L 147.5 149 L 142.5 160 L 141.5 171 L 140.5 172 L 140.5 206 L 141.5 207 L 141.5 213 L 142.5 218 L 147.5 229 L 156 238.5 L 163 243.5 L 172 247.5 L 183 248.5 L 184 249.5 Z M 304.17 748.58 L 290.33 748.42 L 281.33 747.25 L 272.5 744.75 L 267.83 742.75 L 263.33 739.92 L 256.08 733.33 L 249.42 724.67 L 245.08 715.67 L 242.58 706 L 241.42 693.83 L 242.08 679.17 L 244.92 666.5 L 248.42 658.5 L 254.25 650.33 L 261.5 643.75 L 270.67 638.42 L 280.83 635.25 L 289.83 633.92 L 306.17 633.92 L 319.17 636.42 L 326.17 639.25 L 334 644.75 L 339.25 650.33 L 343.58 656.67 L 348.42 667.83 L 348.33 668.58 L 347 668.92 L 318 675.08 L 315.42 668.83 L 310.17 663.25 L 303.67 660.25 L 296.83 659.58 L 293.33 660.08 L 287.5 662.25 L 283.25 665.67 L 280.08 669.83 L 277.75 675.33 L 276.42 681.67 L 275.92 688 L 276.42 700.67 L 278.08 709 L 279.42 712.5 L 281.42 715.67 L 286.5 720.08 L 289.83 721.58 L 296.67 722.75 L 301.5 722.42 L 307.5 720.58 L 310.17 718.92 L 314.75 713.5 L 317.25 708.17 L 319.33 701.08 L 349.42 710.17 L 347.08 718.83 L 344.08 725.33 L 338.08 734 L 333 738.75 L 328.17 742.25 L 320.17 745.92 L 315 747.25 Z M 66.33 746.75 L 13.58 746.67 L 13.67 635.58 L 67.17 635.58 L 74.17 635.92 L 82.33 637.25 L 91 640.42 L 98.5 645.42 L 104.08 651 L 109.92 660 L 113.75 671.17 L 115.75 685.33 L 115.75 697.5 L 114.42 709.67 L 112.75 716.33 L 109.92 722.83 L 107.75 726.5 L 102.08 733.5 L 92.83 740.75 L 87.17 743.25 L 82.33 744.58 L 74.5 746.08 Z M 227.17 746.75 L 133.58 746.67 L 133.67 635.58 L 225.58 635.67 L 225.5 659.42 L 168.08 659.67 L 168.33 676.92 L 221.42 677 L 221.33 699.75 L 168.33 699.75 L 168.08 721.17 L 227.17 721.42 Z M 483.33 746.75 L 441.33 746.75 L 418.33 701.75 L 416.42 703 L 400.58 719.67 L 400.5 746.75 L 366.17 746.75 L 366.08 635.67 L 400.58 635.67 L 400.58 676.33 L 401.33 676.42 L 436.17 635.58 L 481.33 635.58 L 481.42 636.33 L 479.42 638.5 L 443.92 675 L 441.75 678 L 483.42 745.83 Z M 61.08 721.17 L 66.5 720.58 L 72.17 718.58 L 75.75 715.5 L 78.92 710 L 80.75 702.17 L 81.25 694.67 L 80.92 683.17 L 80.08 677.83 L 78.42 672.17 L 76.08 668.17 L 73.17 665.25 L 70.67 663.75 L 62.33 661.25 L 48.33 660.92 L 48.08 721 Z\"/></svg>";
-var MARK9_SVG = "<svg class=\"mark\" width=\"50\" height=\"79\" viewBox=\"0 0 500 790\" preserveAspectRatio=\"xMidYMid meet\" aria-hidden=\"true\"><path fill-rule=\"evenodd\" fill=\"currentColor\" d=\"M 379 609.5 L 120 609.5 L 119 608.5 L 109 608.5 L 96 604.5 L 92 604.5 L 82 600.5 L 71 595.5 L 58 587.5 L 42.5 574 L 31.5 561 L 21.5 545 L 19.5 538 L 14.5 528 L 9.5 506 L 9.5 494 L 8.5 493 L 9 439.5 L 140 439.5 L 141.5 454 L 143.5 461 L 146.5 468 L 153.5 477 L 166 485.5 L 174 488.5 L 180 488.5 L 181 489.5 L 318 489.5 L 319 488.5 L 325 488.5 L 338 482.5 L 346.5 475 L 354.5 462 L 357.5 448 L 357.5 410 L 356.5 409 L 355.5 399 L 350.5 389 L 342 379.5 L 335 374.5 L 326 370.5 L 321 370.5 L 320 369.5 L 125 369.5 L 124 368.5 L 107 367.5 L 88 362.5 L 76 357.5 L 62 349.5 L 49 339.5 L 30.5 319 L 22.5 306 L 15.5 290 L 9.5 266 L 9.5 254 L 8.5 253 L 8.5 126 L 9.5 112 L 14.5 90 L 23.5 70 L 30.5 59 L 49 38.5 L 56 32.5 L 70 23.5 L 90 14.5 L 111 9.5 L 123 9.5 L 124 8.5 L 375 8.5 L 376 9.5 L 388 9.5 L 411 15.5 L 425 21.5 L 440 30.5 L 456.5 45 L 467.5 58 L 476.5 73 L 484.5 93 L 488.5 109 L 488.5 120 L 489.5 121 L 489.5 497 L 488.5 498 L 488.5 509 L 483.5 529 L 475.5 547 L 467.5 560 L 452 577.5 L 440 587.5 L 424 597.5 L 406 604.5 L 390 608.5 L 380 608.5 Z M 314.5 249 L 329 246.5 L 337 242.5 L 345 236.5 L 351.5 228 L 356.5 215 L 356.5 209 L 357.5 208 L 357.5 170 L 356.5 169 L 356.5 162 L 351.5 150 L 345.5 142 L 336 134.5 L 327 130.5 L 316 129.5 L 315 128.5 L 184 128.5 L 183 129.5 L 172 130.5 L 161 135.5 L 147.5 149 L 142.5 160 L 141.5 171 L 140.5 172 L 140.5 206 L 141.5 207 L 141.5 213 L 142.5 218 L 147.5 229 L 156 238.5 L 163 243.5 L 172 247.5 L 183 248.5 L 184 249.5 Z M 304.17 748.58 L 290.33 748.42 L 281.33 747.25 L 272.5 744.75 L 267.83 742.75 L 263.33 739.92 L 256.08 733.33 L 249.42 724.67 L 245.08 715.67 L 242.58 706 L 241.42 693.83 L 242.08 679.17 L 244.92 666.5 L 248.42 658.5 L 254.25 650.33 L 261.5 643.75 L 270.67 638.42 L 280.83 635.25 L 289.83 633.92 L 306.17 633.92 L 319.17 636.42 L 326.17 639.25 L 334 644.75 L 339.25 650.33 L 343.58 656.67 L 348.42 667.83 L 348.33 668.58 L 347 668.92 L 318 675.08 L 315.42 668.83 L 310.17 663.25 L 303.67 660.25 L 296.83 659.58 L 293.33 660.08 L 287.5 662.25 L 283.25 665.67 L 280.08 669.83 L 277.75 675.33 L 276.42 681.67 L 275.92 688 L 276.42 700.67 L 278.08 709 L 279.42 712.5 L 281.42 715.67 L 286.5 720.08 L 289.83 721.58 L 296.67 722.75 L 301.5 722.42 L 307.5 720.58 L 310.17 718.92 L 314.75 713.5 L 317.25 708.17 L 319.33 701.08 L 349.42 710.17 L 347.08 718.83 L 344.08 725.33 L 338.08 734 L 333 738.75 L 328.17 742.25 L 320.17 745.92 L 315 747.25 Z M 66.33 746.75 L 13.58 746.67 L 13.67 635.58 L 67.17 635.58 L 74.17 635.92 L 82.33 637.25 L 91 640.42 L 98.5 645.42 L 104.08 651 L 109.92 660 L 113.75 671.17 L 115.75 685.33 L 115.75 697.5 L 114.42 709.67 L 112.75 716.33 L 109.92 722.83 L 107.75 726.5 L 102.08 733.5 L 92.83 740.75 L 87.17 743.25 L 82.33 744.58 L 74.5 746.08 Z M 227.17 746.75 L 133.58 746.67 L 133.67 635.58 L 225.58 635.67 L 225.5 659.42 L 168.08 659.67 L 168.33 676.92 L 221.42 677 L 221.33 699.75 L 168.33 699.75 L 168.08 721.17 L 227.17 721.42 Z M 483.33 746.75 L 441.33 746.75 L 418.33 701.75 L 416.42 703 L 400.58 719.67 L 400.5 746.75 L 366.17 746.75 L 366.08 635.67 L 400.58 635.67 L 400.58 676.33 L 401.33 676.42 L 436.17 635.58 L 481.33 635.58 L 481.42 636.33 L 479.42 638.5 L 443.92 675 L 441.75 678 L 483.42 745.83 Z M 61.08 721.17 L 66.5 720.58 L 72.17 718.58 L 75.75 715.5 L 78.92 710 L 80.75 702.17 L 81.25 694.67 L 80.92 683.17 L 80.08 677.83 L 78.42 672.17 L 76.08 668.17 L 73.17 665.25 L 70.67 663.75 L 62.33 661.25 L 48.33 660.92 L 48.08 721 Z\"/></svg>";
-var APP_VERSION = "2026-09-07b";
-var KEY = "ninedecks.v1";
-var LKEY = "ninedecks.local.v1";
-
-/* ============================================================
-   Firebase. Paste the config object from your Firebase project's
-   web-app registration here. Leave it blank and the app runs
-   perfectly well as a single-phone scorepad with no database.
-   ============================================================ */
-var FIREBASE_CONFIG = {
-  apiKey: "AIzaSyB05E_DsyrEYHIed8TxGJ88T7F8DbMJeVE",
-  authDomain: "family-apps-8edd9.firebaseapp.com",
-  projectId: "family-apps-8edd9",
-  storageBucket: "family-apps-8edd9.firebasestorage.app",
-  messagingSenderId: "149071542399",
-  appId: "1:149071542399:web:d582805188f838fac1274a"
-};
-var DOC_PATH = ["nine-decks", "current"];
-
-/* Device-local preferences. Deliberately NOT synced: which team this phone
-   scores, and which tab it is on, must survive a remote update rather than
-   being recomputed from shared state every time the other scorer taps something. */
-var L = (function () {
-  // team: "A" | "B" | null (both).  section: "books" | "left" | null (both).
-  var base = { team: null, section: null, strict: false, tab: "round", view: "A" };
-  try {
-    var got = Object.assign(base, JSON.parse(store.get(LKEY) || "{}"));
-    if (got.myTeam) { got.team = got.myTeam === "both" ? null : got.myTeam; delete got.myTeam; }
-    return got;
-  } catch (e) { return base; }
-})();
-function saveLocal() { store.set(LKEY, JSON.stringify(L)); }
-
-/* A lane is a team plus a half of the count - books, or unplayed cards. Four
-   people can work one round at once without ever writing the same field.
-
-   Lanes are a convenience, not a rule. By default a phone can edit anything: who
-   counts what changes round to round, and someone who steps away for a drink
-   should not block the rest. Turning on "lock to my lane" makes it strict, for a
-   table that wants the guard rail. A committed team is the only hard lock. */
-function canEdit(team, section) {
-  if (S.current[team] && S.current[team].committedAt) return false;
-  if (!L.strict) return true;
-  if (L.team && L.team !== team) return false;
-  if (L.section && section && L.section !== section) return false;
-  return true;
-}
-function outsideLane(team, section) {
-  if (!L.team && !L.section) return false;
-  return (L.team && L.team !== team) || (L.section && section && L.section !== section);
-}
-/* Anyone can commit either team. Whoever is holding a phone when the counting
-   finishes should be able to say so. */
-function canCommit(team) { return !S.current[team].committedAt; }
-function roleLabel() {
-  var t = L.team ? S.names[L.team] : "both teams";
-  var sec = L.section === "books" ? "books" : (L.section === "left" ? "unplayed cards" : null);
-  return sec ? sec + " for " + t : t;
-}
-
-/* ============================================================
-   Rules — table-driven, per the PDD. Nothing below reads a
-   hard-coded point value.
-   ============================================================ */
-var RANKS = ["4","5","6","7","8","9","10","J","Q","K","A"];
-
-function defaultRules() {
-  return {
-    decks: 9,
-    bookThreshold: 9,
-    bookMinimum: 3,
-    maxWildsPerBook: 4,
-    goingOut: 500,
-    bookClean: 500,
-    bookDirty: 300,
-    vLow: 5,      // 4 through 9
-    vHigh: 10,    // 10, J, Q, K
-    vAce: 30,
-    vTwo: 20,
-    vJoker: 50,
-    pBlack3: 100, // subtracted
-    pRed3: 300    // subtracted
-  };
-}
-
-function rankValue(rank, rules) {
-  if (rank === "A") return rules.vAce;
-  if (rank === "10" || rank === "J" || rank === "Q" || rank === "K") return rules.vHigh;
-  return rules.vLow;
-}
-
-var LEFT_ROWS = [
-  { key: "low",    label: "Number cards",  hint: "4 through 9",   val: function (r) { return r.vLow; },    penal: false },
-  { key: "high",   label: "Face cards",    hint: "10, J, Q, K",   val: function (r) { return r.vHigh; },   penal: false },
-  { key: "ace",    label: "Aces",          hint: "",              val: function (r) { return r.vAce; },    penal: false },
-  { key: "two",    label: "2s",            hint: "wild",          val: function (r) { return r.vTwo; },    penal: false },
-  { key: "joker",  label: "Jokers",        hint: "wild",          val: function (r) { return r.vJoker; },  penal: false },
-  { key: "black3", label: "Black 3s",      hint: "",              val: function (r) { return r.pBlack3; }, penal: true },
-  { key: "red3",   label: "Red 3s",        hint: "",              val: function (r) { return r.pRed3; },   penal: true }
-];
-
-var RULE_ROWS = [
-  ["goingOut",   "Going out"],
-  ["bookClean",  "Clean book"],
-  ["bookDirty",  "Dirty book"],
-  ["bookMinimum", "Cards needed to start a book"],
-  ["bookThreshold", "Cards that close a book"],
-  ["maxWildsPerBook", "Most wilds allowed in a book"],
-  ["vLow",   "Card value: 4 – 9"],
-  ["vHigh",  "Card value: 10, J, Q, K"],
-  ["vAce",   "Card value: Ace"],
-  ["vTwo",   "Card value: 2"],
-  ["vJoker", "Card value: Joker"],
-  ["pBlack3","Penalty: black 3"],
-  ["pRed3",  "Penalty: red 3"],
-  ["decks",  "Decks in play"]
-];
-
-/* ============================================================
-   State
-   ============================================================ */
-function blankBooks() {
-  var b = {};
-  RANKS.forEach(function (r) { b[r] = { nat: 0, jok: 0, two: 0 }; });
-  return b;
-}
-function blankLeft() {
-  var l = {};
-  LEFT_ROWS.forEach(function (r) { l[r.key] = 0; });
-  return l;
-}
-function blankTeamRound() { return { books: blankBooks(), left: blankLeft(), committedAt: null }; }
-function blankRound() { return { A: blankTeamRound(), B: blankTeamRound(), wentOut: null }; }
-
-function freshState() {
-  return {
-    names: { A: "Team 1", B: "Team 2" },
-    rules: defaultRules(),
-    current: blankRound(),
-    rounds: [],
-    view: "A"
-  };
-}
-
-var S = load();
-
-function load() {
-  var raw = store.get(KEY);
-  if (!raw) return freshState();
-  try {
-    var s = JSON.parse(raw);
-    var base = freshState();
-    s.names = Object.assign(base.names, s.names || {});
-    s.rules = Object.assign(base.rules, s.rules || {});
-    s.rounds = Array.isArray(s.rounds) ? s.rounds : (Array.isArray(s.hands) ? s.hands : []);
-    delete s.hands;
-    s.current = s.current || blankRound();
-    ["A","B"].forEach(function (t) {
-      s.current[t] = s.current[t] || blankTeamRound();
-      s.current[t].books = Object.assign(blankBooks(), s.current[t].books || {});
-      s.current[t].left = Object.assign(blankLeft(), s.current[t].left || {});
+  RECIPES.forEach(function (r) {
+    r.ingredients.forEach(function (ing) {
+      var cleaned = (ing.ingredient || '').toLowerCase().replace(/\(.*?\)/g, '').trim();
+      if (!cleaned) return;
+      if (!CATEGORY_KEYWORDS[ing.category]) CATEGORY_KEYWORDS[ing.category] = [];
+      if (CATEGORY_KEYWORDS[ing.category].indexOf(cleaned) === -1) CATEGORY_KEYWORDS[ing.category].push(cleaned);
     });
-    s.view = s.view === "B" ? "B" : "A";
-    return s;
-  } catch (e) { return freshState(); }
-}
-/* Every write names the exact document field it changed, so a push only ever
-   touches the fields this device owns. Writing the whole document - which is what
-   this did at first - means each writer ships its own stale copy of everyone
-   else's fields and clobbers them. */
-function save(paths) {
-  store.set(KEY, JSON.stringify(S));
-  sync.push(paths);
-}
-function P(team, section) { return "shared.current." + team + "." + section; }
+  });
 
-/* ============================================================
-   Scoring — the single source of truth. Takes stored counts and
-   a rules object, returns an itemised breakdown.
-   ============================================================ */
-function scoreTeam(round, team, rules) {
-  var t = round[team];
-  var lines = [], total = 0;
+  var KEYWORD_ENTRIES = [];
+  Object.keys(CATEGORY_KEYWORDS).forEach(function (cat) {
+    CATEGORY_KEYWORDS[cat].forEach(function (kw) { KEYWORD_ENTRIES.push([kw, cat]); });
+  });
 
-  if (round.wentOut === team) {
-    lines.push({ label: "Went out", pts: rules.goingOut });
-    total += rules.goingOut;
+  function guessCategory(text) {
+    var norm = (text || '').toLowerCase().trim();
+    if (!norm) return null;
+    var best = null, bestLen = 0;
+    for (var i = 0; i < KEYWORD_ENTRIES.length; i++) {
+      var kw = KEYWORD_ENTRIES[i][0];
+      if (kw.length > bestLen && norm.indexOf(kw) !== -1) {
+        best = KEYWORD_ENTRIES[i][1];
+        bestLen = kw.length;
+      }
+    }
+    return best;
   }
 
-  RANKS.forEach(function (rank) {
-    var c = t.books[rank];
-    var count = c.nat + c.jok + c.two;
-    if (!count) return;
-    var cardPts = c.nat * rankValue(rank, rules) + c.jok * rules.vJoker + c.two * rules.vTwo;
-    var wilds = c.jok + c.two;
-    var isBook = count >= rules.bookThreshold;
-    var bonus = 0, tag = "";
-    if (isBook) {
-      bonus = wilds === 0 ? rules.bookClean : rules.bookDirty;
-      tag = wilds === 0 ? " — clean book" : " — dirty book";
+  function defaultState() {
+    return { selectedRecipes: [], customItems: [], removedKeys: [], checkedKeys: [] };
+  }
+
+  function normalizeState(s) {
+    s = s || {};
+    return {
+      selectedRecipes: Array.isArray(s.selectedRecipes) ? s.selectedRecipes : [],
+      customItems: Array.isArray(s.customItems) ? s.customItems : [],
+      removedKeys: Array.isArray(s.removedKeys) ? s.removedKeys : [],
+      checkedKeys: Array.isArray(s.checkedKeys) ? s.checkedKeys : []
+    };
+  }
+
+  var STATE = defaultState();
+  var loaded = false; // true once the first Firestore snapshot has arrived
+
+  // Meal-picker expand/collapse is per-device UI state, not part of the
+  // synced list — kept in localStorage so it isn't affected by other
+  // people's edits and doesn't reset itself when you pick a meal.
+  var MEALS_COLLAPSED_KEY = 'shopping-list:mealsCollapsed';
+  var recipesExpanded = true;
+  try { recipesExpanded = localStorage.getItem(MEALS_COLLAPSED_KEY) !== '1'; } catch (e) {}
+
+  function setRecipesExpanded(value) {
+    recipesExpanded = value;
+    try { localStorage.setItem(MEALS_COLLAPSED_KEY, value ? '0' : '1'); } catch (e) {}
+  }
+
+  function normKey(category, name) {
+    return category + '::' + name.trim().toLowerCase().replace(/\s+/g, ' ');
+  }
+
+  function computeList(state) {
+    var map = {};
+    state.selectedRecipes.forEach(function (rname) {
+      var recipe = RECIPES.filter(function (r) { return r.name === rname; })[0];
+      if (!recipe) return;
+      recipe.ingredients.forEach(function (ing) {
+        var key = normKey(ing.category, ing.ingredient);
+        if (state.removedKeys.indexOf(key) !== -1) return;
+        if (!map[key]) {
+          map[key] = { key: key, name: ing.ingredient, category: ing.category, qtyParts: [], recipes: [], custom: false };
+        }
+        if (ing.qty) map[key].qtyParts.push(ing.qty);
+        map[key].recipes.push(rname);
+      });
+    });
+    state.customItems.forEach(function (item) {
+      var key = 'custom::' + item.id;
+      map[key] = { key: key, name: item.name, category: item.category || 'Other', qtyParts: item.qty ? [item.qty] : [], recipes: [], custom: true };
+    });
+
+    var byCategory = {};
+    Object.keys(map).forEach(function (k) {
+      var row = map[k];
+      row.checked = state.checkedKeys.indexOf(row.key) !== -1;
+      row.qtyText = row.qtyParts.join(' + ');
+      if (!byCategory[row.category]) byCategory[row.category] = [];
+      byCategory[row.category].push(row);
+    });
+    Object.keys(byCategory).forEach(function (c) {
+      byCategory[c].sort(function (a, b) { return a.name.localeCompare(b.name); });
+    });
+    return byCategory;
+  }
+
+  var appEl;
+
+  function el(tag, attrs, children) {
+    var e = document.createElement(tag);
+    if (attrs) Object.keys(attrs).forEach(function (k) {
+      if (k === 'class') e.className = attrs[k];
+      else if (k === 'text') e.textContent = attrs[k];
+      else e.setAttribute(k, attrs[k]);
+    });
+    (children || []).forEach(function (c) { if (c) e.appendChild(c); });
+    return e;
+  }
+
+  function render() {
+    if (!appEl) return;
+    appEl.innerHTML = '';
+    if (!loaded) {
+      appEl.appendChild(el('div', { class: 'empty-note', text: 'Loading your list…' }));
+      return;
     }
-    var desc = rank + "s: " + count + (count === 1 ? " card" : " cards");
-    if (wilds) desc += " (" + wilds + " wild" + (wilds === 1 ? "" : "s") + ")";
-    if (!isBook && count >= rules.bookMinimum) tag = " — open book";
-    lines.push({ label: desc + tag, pts: cardPts + bonus });
-    total += cardPts + bonus;
-  });
+    appEl.appendChild(buildHeader());
+    appEl.appendChild(buildRecipeSection());
+    appEl.appendChild(buildListSection());
+  }
 
-  LEFT_ROWS.forEach(function (row) {
-    var n = t.left[row.key];
-    if (!n) return;
-    var pts = -(n * row.val(rules));
-    lines.push({ label: "Held: " + n + " × " + row.label.toLowerCase(), pts: pts });
-    total += pts;
-  });
+  function buildHeader() {
+    var byCategory = computeList(STATE);
+    var total = 0, done = 0;
+    Object.keys(byCategory).forEach(function (c) {
+      byCategory[c].forEach(function (r) { total++; if (r.checked) done++; });
+    });
+    var header = el('header', { class: 'top' });
+    var inner = el('div', { class: 'inner' }, [
+      el('h1', { class: 'brand' }, [document.createTextNode('Shopping '), el('span', { text: 'List' })]),
+      el('div', { class: 'count-pill', text: total ? (done + ' / ' + total + ' picked up') : 'No list yet' })
+    ]);
+    header.appendChild(inner);
+    return header;
+  }
 
-  return { lines: lines, total: total };
-}
-function bookState(c, rules) {
-  var count = c.nat + c.jok + c.two;
-  if (count >= rules.bookThreshold) return (c.jok + c.two) === 0 ? "clean" : "dirty";
-  if (count >= rules.bookMinimum) return "open";
-  return "none";
-}
-/* "Most cards not being wild" holds at every size, not only at nine - so a
-   three-card book takes one wild, a five-card book two, and nine takes four.
-   Once a book closes at nine no further wilds may be added, which is why four
-   is the ceiling however large it grows. */
-function wildCap(count, rules) {
-  return Math.min(rules.maxWildsPerBook, Math.ceil(count / 2) - 1);
-}
+  function buildRecipeSection() {
+    var section = el('section', { id: 'meals-section' });
+    var headRow = el('div', { class: 'section-head-row' });
+    var titleWrap = el('div', {}, [
+      el('h2', { class: 'section-title', text: "This week's meals" }),
+      el('p', { class: 'section-sub', text: 'Pick what you’re making — ingredients land in the list below.' })
+    ]);
+    var pickedCount = STATE.selectedRecipes.length;
+    var toggleLabel = recipesExpanded
+      ? 'Hide meals ▲'
+      : (pickedCount ? 'Show ' + pickedCount + ' meal' + (pickedCount === 1 ? '' : 's') + ' ▼' : 'Show meals ▼');
+    var toggleBtn = el('button', { class: 'collapse-toggle', type: 'button', text: toggleLabel });
+    toggleBtn.addEventListener('click', function () { setRecipesExpanded(!recipesExpanded); render(); });
+    headRow.appendChild(titleWrap);
+    headRow.appendChild(toggleBtn);
+    section.appendChild(headRow);
 
-/* ============================================================
-   Validation — advisory, never blocking. These are the nine-deck
-   bounds from the PDD; a violation means someone mis-entered,
-   not that the game is illegal.
-   ============================================================ */
-function roundWarnings(round, rules) {
-  var w = [];
-  var R = rules;
+    if (recipesExpanded) {
+      var list = el('div', { class: 'recipe-list' });
+      RECIPES.forEach(function (r) {
+        var checked = STATE.selectedRecipes.indexOf(r.name) !== -1;
+        var cb = el('input', { type: 'checkbox' });
+        cb.checked = checked;
+        cb.addEventListener('change', function () { toggleRecipe(r.name); });
+        var row = el('label', { class: 'recipe-row' + (checked ? ' selected' : '') }, [
+          cb,
+          el('div', { class: 'meta' }, [
+            el('div', { class: 'name', text: r.name }),
+            el('div', { class: 'time', text: r.time })
+          ])
+        ]);
+        list.appendChild(row);
+      });
+      section.appendChild(list);
+    }
+    return section;
+  }
 
-  ["A", "B"].forEach(function (team) {
-    RANKS.forEach(function (rank) {
-      var c = round[team].books[rank];
-      var wilds = c.jok + c.two;
-      var count = c.nat + c.jok + c.two;
-      if (!count) return;
-      var who = S.names[team] + "'s " + rank + "s";
+  function buildListSection() {
+    var section = el('section', { id: 'list-section', class: 'list-section' });
+    var banner = el('div', { class: 'list-banner' }, [
+      el('span', { class: 'list-banner-icon', text: '🛒' }),
+      el('span', { text: 'Shopping List' })
+    ]);
+    section.appendChild(banner);
 
-      if (wilds > R.maxWildsPerBook) {
-        w.push({ scope: "book", bad: true, text: who + " hold " + wilds +
-          " wilds. No book takes more than " + R.maxWildsPerBook + ", since none can be added once it closes." });
-      } else if (count >= R.bookMinimum && wilds >= c.nat) {
-        w.push({ scope: "book", bad: true, text: who + " have " + wilds + " wilds against " +
-          c.nat + " natural card" + (c.nat === 1 ? "" : "s") + ". Most of a book must not be wild." });
-      } else if (count < R.bookMinimum) {
-        w.push({ scope: "book", bad: false, text: who + " have only " + count + " card" +
-          (count === 1 ? "" : "s") + ". A book needs at least " + R.bookMinimum + " to be laid down." });
+    var panel = el('div', { class: 'list-panel' });
+    panel.appendChild(el('p', { class: 'section-sub', text: 'Grouped by aisle. Tap to check off at the store.' }));
+
+    var byCategory = computeList(STATE);
+    var any = false;
+    CATEGORY_ORDER.forEach(function (cat) {
+      var rows = byCategory[cat];
+      if (!rows || !rows.length) return;
+      any = true;
+      var group = el('div', { class: 'cat-group' });
+      group.appendChild(el('h3', { text: cat }));
+      rows.forEach(function (row) {
+        var cb = el('input', { type: 'checkbox' });
+        cb.checked = row.checked;
+        cb.addEventListener('change', function () { toggleChecked(row.key); });
+        var textWrap = el('div', { class: 'text' }, [
+          el('div', { class: 'name', text: row.name })
+        ].concat(row.qtyText ? [el('div', { class: 'qty', text: row.qtyText })] : []));
+        var tapLabel = el('label', { class: 'tap-area' }, [cb, textWrap]);
+        var delBtn = el('button', { class: 'del', text: '×', 'aria-label': 'Remove ' + row.name, type: 'button' });
+        delBtn.addEventListener('click', function (ev) { ev.stopPropagation(); removeItem(row); });
+        var itemRow = el('div', { class: 'item-row' + (row.checked ? ' checked' : '') }, [tapLabel, delBtn]);
+        group.appendChild(itemRow);
+      });
+      panel.appendChild(group);
+    });
+
+    if (!any) {
+      panel.appendChild(el('div', { class: 'empty-note', text: 'Select a meal above, or add an item below, to start your list.' }));
+    }
+
+    var form = el('form', { class: 'add-item' });
+    var input = el('input', { type: 'text', placeholder: 'Add an item…', 'aria-label': 'New item name' });
+    var select = el('select', { class: 'cat-select', 'aria-label': 'Category (guessed automatically as you type)' });
+    CATEGORY_ORDER.forEach(function (c) {
+      var opt = el('option', { value: c, text: c });
+      if (c === 'Other') opt.selected = true;
+      select.appendChild(opt);
+    });
+    var addBtn = el('button', { class: 'btn primary', type: 'submit', text: 'Add' });
+    form.appendChild(input); form.appendChild(select); form.appendChild(addBtn);
+
+    var userPickedCategory = false;
+    select.addEventListener('change', function () { userPickedCategory = true; });
+    input.addEventListener('input', function () {
+      if (userPickedCategory) return;
+      var guess = guessCategory(input.value) || 'Other';
+      if (select.value !== guess) {
+        select.value = guess;
+        select.classList.remove('cat-select-guessed');
+        void select.offsetWidth;
+        select.classList.add('cat-select-guessed');
       }
     });
-  });
 
-  var perRank = R.decks * 4;
-  RANKS.forEach(function (rank) {
-    var nat = round.A.books[rank].nat + round.B.books[rank].nat;
-    if (nat > perRank) {
-      w.push({ scope: "book", bad: true, text: "There are " + nat + " natural " + rank +
-        "s on the table. " + R.decks + " decks only hold " + perRank + "." });
-    }
-  });
-
-  /* Going out takes a closed clean book and a closed dirty book. */
-  if (!round.wentOut) {
-    w.push({ scope: "round", bad: false, text: "No one is marked as going out yet — that's " +
-      R.goingOut + " points unawarded." });
-  } else {
-    var t = round[round.wentOut], clean = 0, dirty = 0;
-    RANKS.forEach(function (rank) {
-      var st = bookState(t.books[rank], R);
-      if (st === "clean") clean++;
-      if (st === "dirty") dirty++;
+    form.addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      var name = input.value.trim();
+      if (!name) return;
+      addCustomItem(name, select.value);
+      input.value = '';
+      select.value = 'Other';
+      userPickedCategory = false;
+      input.focus();
     });
-    if (!clean || !dirty) {
-      var missing = !clean && !dirty ? "a clean book and a dirty book"
-        : (!clean ? "a clean book" : "a dirty book");
-      w.push({ scope: "round", bad: true, text: S.names[round.wentOut] +
-        " can't go out without " + missing + " closed at " + R.bookThreshold + " cards." });
-    }
-  }
-  return w;
-}
+    panel.appendChild(form);
 
-/* ============================================================
-   Sync — one Firestore document, two writers.
-
-   The shape matters: each team's current hand lives under its own
-   top-level field, so the two scorers never write the same path and
-   there is nothing to conflict over. Firestore's own offline queue
-   handles a dead connection, so there is no retry logic here.
-   ============================================================ */
-var sync = (function () {
-  var api = null, ref = null, unsub = null;
-  var state = "local";
-  var detail = "";
-  var pushTimer = null;
-  var applying = false;         // don't echo a remote update straight back
-  var dirty = {};               // field path -> when we last touched it
-  var closing = false;
-
-  function configured() { return !!FIREBASE_CONFIG.projectId && !!FIREBASE_CONFIG.apiKey; }
-  function live() { return !!ref; }
-  function setState(st, d) { state = st; detail = d || ""; renderSync(); }
-
-  async function start() {
-    if (!configured()) { setState("local", "No database configured."); return; }
-    setState("connecting", "");
-    try {
-      var appMod = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
-      var fsMod  = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
-      var app = appMod.initializeApp(FIREBASE_CONFIG);
-      var db;
-      try {
-        db = fsMod.initializeFirestore(app, {
-          localCache: fsMod.persistentLocalCache({ tabManager: fsMod.persistentMultipleTabManager() })
-        });
-      } catch (e) { db = fsMod.getFirestore(app); }
-      api = fsMod;
-      ref = fsMod.doc(db, DOC_PATH[0], DOC_PATH[1]);
-
-      unsub = fsMod.onSnapshot(ref, { includeMetadataChanges: true }, function (snap) {
-        if (!snap.exists()) { seed(); return; }
-        setState(snap.metadata.fromCache ? "offline" : "live", "");
-        if (snap.metadata.hasPendingWrites) return;
-        applyRemote(snap.data());
-        maybeClose();
-      }, function (err) {
-        setState("error", err && err.message ? err.message : "Connection failed.");
-      });
-    } catch (e) {
-      setState("error", (e && e.message) || "Could not load the database library.");
-    }
+    section.appendChild(panel);
+    return section;
   }
 
-  /* Remote wins, except on the fields this device has just edited. Without the
-     exception, a remote echo arriving between two taps would fight the stepper. */
-  function heldLocally(path) { return dirty[path] && Date.now() < dirty[path] + 2500; }
-
-  function applyRemote(data) {
-    if (!data || !data.shared) return;
-    var inc = data.shared;
-    var keep = {};
-    ["A", "B"].forEach(function (t) {
-      ["books", "left"].forEach(function (sec) {
-        if (heldLocally(P(t, sec))) keep[t + "." + sec] = JSON.parse(JSON.stringify(S.current[t][sec]));
-      });
-    });
-    var keepWentOut = heldLocally("shared.current.wentOut") ? S.current.wentOut : undefined;
-
-    applying = true;
-    try {
-      S.names = Object.assign({ A: "Team 1", B: "Team 2" }, inc.names || {});
-      S.rules = Object.assign(defaultRules(), inc.rules || {});
-      S.rounds = Array.isArray(inc.rounds) ? inc.rounds : [];
-      S.current = inc.current || blankRound();
-      ["A", "B"].forEach(function (t) {
-        S.current[t] = S.current[t] || blankTeamRound();
-        S.current[t].books = Object.assign(blankBooks(), S.current[t].books || {});
-        S.current[t].left = Object.assign(blankLeft(), S.current[t].left || {});
-        S.current[t].committedAt = S.current[t].committedAt || null;
-        ["books", "left"].forEach(function (sec) {
-          if (keep[t + "." + sec]) S.current[t][sec] = keep[t + "." + sec];
-        });
-      });
-      if (keepWentOut !== undefined) S.current.wentOut = keepWentOut;
-      store.set(KEY, JSON.stringify(S));
-    } finally { applying = false; }
-    renderAll();
+  function toggleRecipe(name) {
+    var s = cloneState();
+    var i = s.selectedRecipes.indexOf(name);
+    if (i === -1) s.selectedRecipes.push(name); else s.selectedRecipes.splice(i, 1);
+    commit(s);
   }
 
-  function valueAt(path) {
-    var parts = path.split(".");
-    var node = { shared: { names: S.names, rules: S.rules, current: S.current, rounds: S.rounds } };
-    for (var i = 0; i < parts.length; i++) node = node[parts[i]];
-    return node;
+  function toggleChecked(key) {
+    var s = cloneState();
+    var i = s.checkedKeys.indexOf(key);
+    if (i === -1) s.checkedKeys.push(key); else s.checkedKeys.splice(i, 1);
+    commit(s);
   }
 
-  async function seed() {
-    if (!ref) return;
-    try {
-      await api.setDoc(ref, { shared: { names: S.names, rules: S.rules,
-        current: S.current, rounds: S.rounds }, updatedAt: Date.now() });
-    } catch (e) { setState("error", (e && e.message) || "Write failed."); }
-  }
-
-  async function flush() {
-    if (!ref || applying) return;
-    var paths = Object.keys(dirty);
-    if (!paths.length) return;
-    var patch = { updatedAt: Date.now() };
-    paths.forEach(function (path) { patch[path] = valueAt(path); });
-    try { await api.updateDoc(ref, patch); }
-    catch (e) {
-      // The document may not exist yet on a brand new project.
-      try { await seed(); } catch (e2) { setState("error", (e2 && e2.message) || "Write failed."); }
-    }
-  }
-
-  /* Debounced: a scorer tapping "+" nine times is one write, not nine. */
-  function push(paths) {
-    if (!paths) return;
-    if (typeof paths === "string") paths = [paths];
-    var now = Date.now();
-    paths.forEach(function (p) { dirty[p] = now; });
-    if (!ref) return;
-    clearTimeout(pushTimer);
-    pushTimer = setTimeout(flush, 450);
-  }
-
-  /* Both teams committed -> the round closes. Any device may notice, so this runs
-     as a transaction: the first one to land clears the commit flags, and the rest
-     re-read, see them gone, and do nothing. */
-  async function closeRound() {
-    if (!ref || closing) return;
-    closing = true;
-    try {
-      await api.runTransaction(api.getFirestore ? ref.firestore : ref.firestore, async function (tx) {
-        var snap = await tx.get(ref);
-        if (!snap.exists()) return;
-        var sh = snap.data().shared || {};
-        var cur = sh.current || {};
-        if (!(cur.A && cur.A.committedAt && cur.B && cur.B.committedAt)) return;
-        var rounds = Array.isArray(sh.rounds) ? sh.rounds.slice() : [];
-        cur.savedAt = new Date().toISOString();
-        rounds.push(cur);
-        tx.update(ref, { "shared.rounds": rounds, "shared.current": blankRound(),
-                         updatedAt: Date.now() });
-      });
-    } catch (e) {
-      setState("error", (e && e.message) || "Could not close the round.");
-    } finally { closing = false; }
-  }
-
-  function maybeClose() {
-    if (!S.current.A.committedAt || !S.current.B.committedAt) return;
-    if (!ref) { closeRoundLocally(); return; }
-    closeRound();
-  }
-
-  function status() { return { state: state, detail: detail, configured: configured(), live: live() }; }
-  function reconnect() { if (unsub) { unsub(); unsub = null; } api = null; ref = null; dirty = {}; start(); }
-
-  return { start: start, push: push, status: status, reconnect: reconnect,
-           maybeClose: maybeClose, flush: flush };
-})();
-
-/* No database configured: the same rule, applied locally. */
-function closeRoundLocally() {
-  var done = JSON.parse(JSON.stringify(S.current));
-  done.savedAt = new Date().toISOString();
-  S.rounds.push(done);
-  S.current = blankRound();
-  store.set(KEY, JSON.stringify(S));
-  renderAll();
-  showPanel("history");
-  toast("Round " + S.rounds.length + " saved");
-}
-
-/* ============================================================
-   Render
-   ============================================================ */
-var $ = function (id) { return document.getElementById(id); };
-function el(tag, cls, txt) {
-  var n = document.createElement(tag);
-  if (cls) n.className = cls;
-  if (txt != null) n.textContent = txt;
-  return n;
-}
-function money(n) { return (n < 0 ? "−" : "") + Math.abs(n).toLocaleString("en-US"); }
-
-function renderStoreWarn() {
-  var box = $("storewarn");
-  box.innerHTML = "";
-  if (store.durable) return;
-  var b = el("div", "banner", "This browser isn't letting the page save anything, so scores will vanish on refresh. Export a backup from Setup before you close the tab.");
-  box.appendChild(b);
-}
-
-function renderSync() {
-  var st = sync.status();
-  var line = $("syncline");
-  if (!line) return;
-  var map = {
-    local:      ["local", "Scores stay on this phone."],
-    connecting: ["local", "Connecting to the shared game\u2026"],
-    live:       ["live",  "Live with the other scorer."],
-    offline:    ["off",   "No connection \u2014 saved here, syncs when you're back."],
-    error:      ["off",   "Sync trouble \u2014 still saving on this phone."]
-  };
-  var m = map[st.state] || map.local;
-  line.innerHTML = "";
-  line.appendChild(el("span", "dot " + m[0]));
-  line.appendChild(el("span", null, m[1] + " Scoring " + roleLabel() + "."));
-
-  var note = $("syncnote");
-  if (note) {
-    if (!st.configured) {
-      note.textContent = "No database is set up, so this phone keeps its own copy. Add a Firebase config to the top of the file and both scorers see each other's entries live.";
-    } else if (st.state === "error") {
-      note.textContent = "Couldn't reach the shared game: " + st.detail + " Entries are still saved on this phone and will sync once it reconnects.";
-    } else if (st.state === "offline") {
-      note.textContent = "Working from this phone's copy. Firestore holds the changes and sends them the moment there's a connection.";
-    } else if (st.state === "live") {
-      note.textContent = "Connected. Both scorers are writing to the same game, each to their own team.";
+  function removeItem(row) {
+    var s = cloneState();
+    if (row.custom) {
+      var id = row.key.replace('custom::', '');
+      s.customItems = s.customItems.filter(function (it) { return it.id !== id; });
     } else {
-      note.textContent = "Connecting\u2026";
+      if (s.removedKeys.indexOf(row.key) === -1) s.removedKeys.push(row.key);
+    }
+    s.checkedKeys = s.checkedKeys.filter(function (k) { return k !== row.key; });
+    commit(s);
+  }
+
+  function addCustomItem(name, category) {
+    var s = cloneState();
+    var id = Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+    s.customItems.push({ id: id, name: name, qty: '', category: category || 'Other' });
+    commit(s);
+  }
+
+  function uncheckAll() {
+    var s = cloneState();
+    s.checkedKeys = [];
+    commit(s);
+  }
+
+  function openResetConfirm() {
+    var overlay = document.getElementById('confirm-overlay');
+    if (overlay) overlay.classList.add('open');
+  }
+
+  function closeResetConfirm() {
+    var overlay = document.getElementById('confirm-overlay');
+    if (overlay) overlay.classList.remove('open');
+  }
+
+  function cloneState() {
+    return JSON.parse(JSON.stringify(STATE));
+  }
+
+  // ---- Firestore wiring ----
+  // Everyone who opens this page reads and writes the same single document.
+  // Firestore's own SDK handles offline queueing, retry, and real-time push
+  // to every other open tab/phone — no hand-rolled retry/backoff needed here.
+  var db = null;
+  var docRef = null;
+  var writeTimer = null;
+  var firebaseReady = window.__firebaseReady; // set by the module script below
+
+  function updateSyncFlag(mode) {
+    var flag = document.getElementById('sync-flag');
+    if (!flag) return;
+    flag.className = 'sync-flag';
+    flag.onclick = null;
+    if (mode === 'saving') {
+      flag.textContent = 'Saving…';
+    } else if (mode === 'saved') {
+      flag.textContent = '';
+    } else if (mode === 'offline') {
+      flag.textContent = 'Offline — showing last saved list, will sync when back online';
+      flag.classList.add('sync-flag-warn');
+    } else if (mode === 'error') {
+      flag.textContent = 'Could not connect (tap to retry)';
+      flag.classList.add('sync-flag-warn');
+      flag.onclick = function () { window.location.reload(); };
     }
   }
-}
 
-function renderWhoami() {
-  var box = $("whoami");
-  if (!box) return;
-  box.innerHTML = "";
-  [["A", S.names.A], ["B", S.names.B], [null, "Both"]].forEach(function (opt) {
-    var b = el("button", null, opt[1]);
-    b.setAttribute("aria-pressed", L.team === opt[0] ? "true" : "false");
-    b.onclick = function () {
-      L.team = opt[0];
-      if (opt[0] === null) L.section = null; else L.view = opt[0];
-      saveLocal(); renderAll();
-    };
-    box.appendChild(b);
-  });
-
-  var box2 = $("whatami");
-  box2.innerHTML = "";
-  [["books", "Books"], ["left", "Unplayed"], [null, "Both"]].forEach(function (opt) {
-    var b = el("button", null, opt[1]);
-    b.setAttribute("aria-pressed", L.section === opt[0] ? "true" : "false");
-    b.disabled = !L.team && opt[0] !== null;
-    b.onclick = function () { L.section = opt[0]; saveLocal(); renderAll(); };
-    box2.appendChild(b);
-  });
-
-  var tog = $("stricttoggle");
-  tog.textContent = L.strict ? "Locked to this lane" : "Lock this phone to its lane";
-  tog.style.fontWeight = L.strict ? "700" : "400";
-  tog.disabled = !L.team && !L.section;
-  tog.onclick = function () { L.strict = !L.strict; saveLocal(); renderAll(); };
-
-  var note = $("rolenote");
-  if (!L.team && !L.section) {
-    note.textContent = "No lane picked, so this phone can enter anything. That is the right setting for one or two scorers, and a fine setting for four — a lane is only a convenience.";
-  } else if (!L.strict) {
-    note.textContent = "This phone opens on " + roleLabel() + " and its button commits that team, but it can still enter anything. Handy when someone steps away mid-round.";
-  } else {
-    note.textContent = "This phone is limited to " + roleLabel() + ". Anything else is visible but locked — there is a take-over button on each section if that needs to change.";
+  function commit(newState) {
+    STATE = newState;
+    render();
+    if (!docRef) return;
+    updateSyncFlag('saving');
+    clearTimeout(writeTimer);
+    writeTimer = setTimeout(function () {
+      window.__firestoreSetDoc(docRef, newState).catch(function () {
+        // The SDK already queued this write locally and will retry once
+        // connectivity returns, so this just reflects that back visually.
+        updateSyncFlag('offline');
+      });
+    }, 250);
   }
-}
 
-function renderTeamSwitch() {
-  var box = $("teamswitch");
-  box.innerHTML = "";
-  ["A","B"].forEach(function (t) {
-    var s = scoreTeam(S.current, t, S.rules);
-    var b = el("button");
-    b.setAttribute("aria-pressed", L.view === t ? "true" : "false");
-    var n = el("span", "tname");
-    var p = el("span", "pip " + t.toLowerCase());
-    n.appendChild(p);
-    n.appendChild(document.createTextNode(S.names[t]));
-    b.appendChild(n);
-    b.appendChild(el("span", "tsub", (S.current[t].committedAt ? "\u2713 committed \u00b7 " : "this round ") + money(s.total)));
-    b.onclick = function () { L.view = t; saveLocal(); renderRound(); };
-    box.appendChild(b);
-  });
-}
+  function startFirestoreSync(firebaseApp, firestoreExports) {
+    db = firestoreExports.db;
+    docRef = firestoreExports.docRef;
+    window.__firestoreSetDoc = firestoreExports.setDoc;
 
-function stepper(get, set, max, hot, locked, path) {
-  var wrap = el("div", "step" + (hot && get() > 0 ? " hot" : "") + (locked ? " readonly" : ""));
-  var minus = el("button", null, "−");
-  minus.setAttribute("aria-label", "one fewer");
-  var val = el("div", "val" + (get() === 0 ? " zero" : ""), String(get()));
-  var plus = el("button", null, "+");
-  plus.setAttribute("aria-label", "one more");
-  if (get() <= 0 || locked) minus.disabled = true;
-  if ((max != null && get() >= max) || locked) plus.disabled = true;
-  minus.onclick = function () { if (get() > 0) { set(get() - 1); commit(path); } };
-  plus.onclick = function () { set(get() + 1); commit(path); };
-  wrap.appendChild(minus); wrap.appendChild(val); wrap.appendChild(plus);
-  return wrap;
-}
-function commit(path) { save(path); renderRound(); }
-
-function renderClaim(id, section) {
-  var box = $(id);
-  if (!box) return;
-  box.innerHTML = "";
-  var team = L.view;
-  if (S.current[team].committedAt) {
-    box.appendChild(el("span", "claim", "Committed"));
-    return;
-  }
-  if (!L.strict || !outsideLane(team, section)) return;
-  var b = el("button", "claim", "Take over");
-  b.onclick = function () { L.strict = false; saveLocal(); renderAll(); toast("Lane lock off — you can enter anything"); };
-  box.appendChild(b);
-}
-
-function renderBooks() {
-  var g = $("booksgrid");
-  g.innerHTML = "";
-  var heads = ["", "Cards", "Jokers", "2s", ""];
-  heads.forEach(function (h) { g.appendChild(el("div", "ghead", h)); });
-
-  var team = L.view;
-  RANKS.forEach(function (rank) {
-    var c = S.current[team].books[rank];
-    g.appendChild(el("div", "rank", rank));
-    var lock = !canEdit(team, "books"), path = P(team, "books");
-    g.appendChild(stepper(function () { return c.nat; }, function (v) { c.nat = v; }, null, false, lock, path));
-    g.appendChild(stepper(function () { return c.jok; }, function (v) { c.jok = v; }, null, true, lock, path));
-    g.appendChild(stepper(function () { return c.two; }, function (v) { c.two = v; }, null, true, lock, path));
-
-    var st = bookState(c, S.rules);
-    var count = c.nat + c.jok + c.two;
-    var seal;
-    if (st === "clean") seal = el("div", "seal clean", "Clean\n" + S.rules.bookClean);
-    else if (st === "dirty") seal = el("div", "seal dirty", "Dirty\n" + S.rules.bookDirty);
-    else if (st === "open") seal = el("div", "seal open", "Open\n" + count + "/" + S.rules.bookThreshold);
-    else seal = el("div", "seal none", count ? String(count) : "");
-    seal.style.whiteSpace = "pre-line";
-    g.appendChild(seal);
-  });
-}
-
-function renderLeft() {
-  var g = $("leftgrid");
-  g.innerHTML = "";
-  var team = L.view;
-  LEFT_ROWS.forEach(function (row) {
-    var lbl = el("div", "lbl" + (row.penal ? " lbl penal" : ""));
-    lbl.className = "lbl" + (row.penal ? " penal" : "");
-    lbl.appendChild(document.createTextNode(row.label));
-    var sub = el("small", null, "−" + row.val(S.rules) + " each" + (row.hint ? " · " + row.hint : ""));
-    lbl.appendChild(sub);
-    g.appendChild(lbl);
-    g.appendChild(stepper(
-      function () { return S.current[team].left[row.key]; },
-      function (v) { S.current[team].left[row.key] = v; },
-      null, row.penal, !canEdit(team, "left"), P(team, "left")
-    ));
-  });
-}
-
-function renderOut() {
-  var box = $("outpick");
-  box.innerHTML = "";
-  ["A","B"].forEach(function (t) {
-    var b = el("button", null, S.names[t]);
-    b.setAttribute("aria-pressed", S.current.wentOut === t ? "true" : "false");
-    b.disabled = !!(S.current.A.committedAt && S.current.B.committedAt);
-    b.onclick = function () {
-      S.current.wentOut = (S.current.wentOut === t) ? null : t;
-      commit("shared.current.wentOut");
-    };
-    box.appendChild(b);
-  });
-}
-
-function renderWarnings() {
-  var all = roundWarnings(S.current, S.rules);
-  var bookBox = $("bookwarns"), roundBox = $("roundwarns");
-  bookBox.innerHTML = ""; roundBox.innerHTML = "";
-  all.forEach(function (w) {
-    var li = el("li", w.bad ? "bad" : "", w.text);
-    (w.scope === "round" ? roundBox : bookBox).appendChild(li);
-  });
-}
-
-function renderFinish() {
-  var box = $("finish");
-  if (!box) return;
-  box.innerHTML = "";
-  ["A", "B"].forEach(function (t) {
-    var sc = scoreTeam(S.current, t, S.rules);
-    var row = el("div", "finishrow");
-    row.appendChild(el("div", "fn", S.names[t]));
-    row.appendChild(el("div", "fv" + (sc.total < 0 ? " neg" : ""), money(sc.total)));
-    var done = !!S.current[t].committedAt;
-    var b = el("button", "btn" + (done ? " done" : ""), done ? "\u2713 Committed" : "Commit");
-    b.onclick = function () { done ? uncommitTeam(t) : commitTeam(t); };
-    row.appendChild(b);
-    box.appendChild(row);
-  });
-}
-
-function renderTally() {
-  var bar = $("tallybar");
-  bar.innerHTML = "";
-  ["A", "B"].forEach(function (t) {
-    var sc = scoreTeam(S.current, t, S.rules);
-    var d = el("div", "tallyteam");
-    var n = el("div", "n", S.names[t]);
-    if (S.current[t].committedAt) {
-      var tick = el("span", "tick", "\u2713 ");
-      n.insertBefore(tick, n.firstChild);
-      d.classList.add("done");
-    }
-    d.appendChild(n);
-    d.appendChild(el("div", "v" + (sc.total < 0 ? " neg" : ""), money(sc.total)));
-    bar.appendChild(d);
-  });
-
-  // A lane just decides which shortcut sits in the bar. The full set of commit
-  // buttons is always available in the Finishing the round sheet.
-  var mine = L.team;
-  if (!mine) {
-    var both = S.current.A.committedAt && S.current.B.committedAt;
-    var btn = el("button", "save", both ? "Close round" : "Save round");
-    btn.onclick = function () {
-      if (!teamHasEntry("A") && !teamHasEntry("B") && !S.current.wentOut) {
-        toast("Nothing entered for this round yet"); return;
+    firestoreExports.onSnapshot(docRef, { includeMetadataChanges: true }, function (snap) {
+      if (snap.exists()) {
+        STATE = normalizeState(snap.data());
+      } else {
+        STATE = defaultState();
+        firestoreExports.setDoc(docRef, STATE).catch(function () {});
       }
-      ask("Save this round?", "This closes the round for " + S.names.A + " and " +
-          S.names.B + " and adds it to the running totals.", "Save round", function () {
-        S.current.A.committedAt = S.current.B.committedAt = new Date().toISOString();
-        save(["shared.current.A.committedAt", "shared.current.B.committedAt"]);
-        sync.maybeClose();
-      });
-    };
-    bar.appendChild(btn);
-    return;
-  }
-
-  if (S.current[mine].committedAt) {
-    var undo = el("button", "save ghost", "Undo commit");
-    undo.onclick = function () { uncommitTeam(mine); };
-    bar.appendChild(undo);
-  } else {
-    var c = el("button", "save", "Commit " + S.names[mine]);
-    c.onclick = function () { commitTeam(mine); };
-    bar.appendChild(c);
-  }
-}
-
-function renderRound() {
-  renderStoreWarn();
-  renderSync();
-  renderTeamSwitch();
-  renderBooks();
-  renderLeft();
-  renderOut();
-  renderClaim("booksclaim", "books");
-  renderClaim("leftclaim", "left");
-  renderWarnings();
-  renderFinish();
-  renderTally();
-}
-
-/* ---------- history ---------- */
-function runningTotals() {
-  var tot = { A: 0, B: 0 };
-  S.rounds.forEach(function (r) {
-    tot.A += scoreTeam(r, "A", S.rules).total;
-    tot.B += scoreTeam(r, "B", S.rules).total;
-  });
-  return tot;
-}
-
-function renderHistory() {
-  var tot = runningTotals();
-  var box = $("totals");
-  box.innerHTML = "";
-  ["A","B"].forEach(function (t) {
-    var other = t === "A" ? "B" : "A";
-    var lead = S.rounds.length && tot[t] > tot[other];
-    var d = el("div", "totbox" + (lead ? " lead" : ""));
-    d.appendChild(el("div", "n", S.names[t]));
-    d.appendChild(el("div", "v" + (tot[t] < 0 ? " neg" : ""), money(tot[t])));
-    box.appendChild(d);
-  });
-
-  var list = $("roundlist");
-  list.innerHTML = "";
-  if (!S.rounds.length) {
-    var e = el("div", "empty");
-    e.innerHTML = MARK_SVG;
-    e.appendChild(el("p", null, "No rounds saved yet. Score one on the Round tab and it lands here."));
-    e.querySelector("p").style.margin = "0";
-    list.appendChild(e);
-    return;
-  }
-  S.rounds.slice().reverse().forEach(function (r, ri) {
-    var idx = S.rounds.length - 1 - ri;
-    var a = scoreTeam(r, "A", S.rules), b = scoreTeam(r, "B", S.rules);
-    var d = el("details", "round");
-    var sm = el("summary");
-    sm.appendChild(el("span", "hn", "Round " + (idx + 1)));
-    sm.appendChild(el("span", "hs" + (a.total < 0 ? " neg" : ""), money(a.total)));
-    sm.appendChild(el("span", "hs" + (b.total < 0 ? " neg" : ""), money(b.total)));
-    d.appendChild(sm);
-
-    var body = el("div", "body");
-    [["A", a], ["B", b]].forEach(function (pair) {
-      var wrap = el("div", "bd");
-      wrap.appendChild(el("h4", null, S.names[pair[0]]));
-      var tb = el("table");
-      pair[1].lines.forEach(function (ln) {
-        var tr = el("tr");
-        tr.appendChild(el("td", null, ln.label));
-        tr.appendChild(el("td", "r", money(ln.pts)));
-        tb.appendChild(tr);
-      });
-      var tr2 = el("tr", "sum");
-      tr2.appendChild(el("td", null, "Round total"));
-      tr2.appendChild(el("td", "r", money(pair[1].total)));
-      tb.appendChild(tr2);
-      wrap.appendChild(tb);
-      body.appendChild(wrap);
+      loaded = true;
+      render();
+      if (snap.metadata.hasPendingWrites) {
+        updateSyncFlag('saving');
+      } else if (snap.metadata.fromCache) {
+        updateSyncFlag('offline');
+      } else {
+        updateSyncFlag('saved');
+      }
+    }, function () {
+      updateSyncFlag('error');
     });
-
-    var row = el("div", "btnrow");
-    var edit = el("button", "btn", "Reopen for editing");
-    edit.onclick = function () { reopenRound(idx); };
-    row.appendChild(edit);
-    var del = el("button", "btn warn", "Delete this round");
-    del.onclick = function () {
-      ask("Delete round " + (idx + 1) + "?", "Its card counts and score come off both teams' totals. This can't be undone.",
-        "Delete hand", function () {
-          S.rounds.splice(idx, 1); save(); renderHistory(); toast("Round deleted");
-        });
-    };
-    row.appendChild(del);
-    body.appendChild(row);
-    d.appendChild(body);
-    list.appendChild(d);
-  });
-}
-
-/* ---------- setup ---------- */
-function renderSetup() {
-  var b = $("buildline");
-  if (b) b.textContent = "Version " + APP_VERSION + (store.durable ? "" : " — storage unavailable");
-  $("nameA").value = S.names.A;
-  $("nameB").value = S.names.B;
-  var g = $("rulesgrid");
-  g.innerHTML = "";
-  RULE_ROWS.forEach(function (r) {
-    var key = r[0];
-    g.appendChild(el("div", null, r[1]));
-    var inp = document.createElement("input");
-    inp.type = "number"; inp.inputMode = "numeric"; inp.min = "0";
-    inp.value = S.rules[key];
-    inp.onchange = function () {
-      var v = parseInt(inp.value, 10);
-      if (isNaN(v) || v < 0) { inp.value = S.rules[key]; return; }
-      S.rules[key] = v; save("shared.rules"); renderAll(); toast("Rule updated");
-    };
-    g.appendChild(inp);
-  });
-}
-
-/* ---------- actions ---------- */
-
-function teamHasEntry(team) {
-  var t = S.current[team], any = false;
-  RANKS.forEach(function (r) {
-    var c = t.books[r];
-    if (c.nat || c.jok || c.two) any = true;
-  });
-  LEFT_ROWS.forEach(function (r) { if (t.left[r.key]) any = true; });
-  return any;
-}
-
-/* Each team commits its own side. The round closes on its own once both have,
-   which is what lets two teams finish counting at different speeds. */
-function commitTeam(team) {
-  if (!canCommit(team)) return;
-  var go = function () {
-    S.current[team].committedAt = new Date().toISOString();
-    save("shared.current." + team + ".committedAt");
-    renderAll();
-    var other = team === "A" ? "B" : "A";
-    if (S.current[other].committedAt) sync.maybeClose();
-    else toast(S.names[team] + " committed — waiting on " + S.names[other]);
-  };
-
-  if (!teamHasEntry(team) && !S.current.wentOut) {
-    toast("Nothing entered for " + S.names[team] + " yet");
-    return;
   }
-  var s2 = scoreTeam(S.current, team, S.rules);
-  ask("Commit " + S.names[team] + " at " + money(s2.total) + "?",
-      "This locks their books and unplayed cards for the round. Anyone scoring for "
-      + S.names[team] + " can undo it until the round closes.",
-      "Commit", go);
-}
 
-/* A saved round can be pulled back for editing rather than deleted and retyped.
-   It only works when nothing is part-entered, since there is one current round
-   shared across every phone. */
-function reopenRound(idx) {
-  if (teamHasEntry("A") || teamHasEntry("B") || S.current.wentOut) {
-    toast("Finish or clear the round in progress first");
-    return;
-  }
-  ask("Reopen round " + (idx + 1) + "?",
-      "It comes off both teams' totals and goes back to the Round tab. Saving it "
-      + "again puts it at the end of the history, so later rounds shift up a number.",
-      "Reopen", function () {
-    var r = JSON.parse(JSON.stringify(S.rounds[idx]));
-    S.rounds.splice(idx, 1);
-    delete r.savedAt;
-    r.A.committedAt = null;
-    r.B.committedAt = null;
-    S.current = r;
-    save(["shared.rounds", "shared.current"]);
-    renderAll();
-    showPanel("round");
-    toast("Round reopened for editing");
-  });
-}
+  function wireFooter() {
+    var u = document.getElementById('btn-uncheck');
+    var r = document.getElementById('btn-reset');
+    if (u) u.addEventListener('click', uncheckAll);
+    if (r) r.addEventListener('click', openResetConfirm);
 
-function uncommitTeam(team) {
-  S.current[team].committedAt = null;
-  save("shared.current." + team + ".committedAt");
-  renderAll();
-}
-
-/* Native confirm() is silently swallowed in the Artifact sandbox, so every
-   destructive action routes through this in-page dialog instead. */
-var _askYes = null;
-function ask(title, body, confirmLabel, onYes) {
-  $("dlgtitle").textContent = title;
-  $("dlgbody").textContent = body;
-  $("dlgyes").textContent = confirmLabel;
-  _askYes = onYes;
-  $("scrim").classList.add("on");
-  $("dlgyes").focus();
-}
-function closeAsk() { $("scrim").classList.remove("on"); _askYes = null; }
-$("dlgno").onclick = closeAsk;
-$("dlgyes").onclick = function () { var f = _askYes; closeAsk(); if (f) f(); };
-$("scrim").onclick = function (e) { if (e.target === $("scrim")) closeAsk(); };
-document.addEventListener("keydown", function (e) {
-  if (e.key === "Escape" && $("scrim").classList.contains("on")) closeAsk();
-});
-
-function toast(msg) {
-  var t = $("toast");
-  t.textContent = msg;
-  t.classList.add("on");
-  clearTimeout(t._t);
-  t._t = setTimeout(function () { t.classList.remove("on"); }, 1900);
-}
-
-function download(name, text, type) {
-  var blob = new Blob([text], { type: type });
-  var url = URL.createObjectURL(blob);
-  var a = document.createElement("a");
-  a.href = url; a.download = name;
-  document.body.appendChild(a); a.click(); a.remove();
-  setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
-}
-
-function exportCsv() {
-  var head = ["round","team","went_out"];
-  RANKS.forEach(function (r) { head.push(r + "_natural", r + "_jokers", r + "_twos", r + "_book"); });
-  LEFT_ROWS.forEach(function (l) { head.push("held_" + l.key); });
-  head.push("round_score");
-  var rows = [head.join(",")];
-  S.rounds.forEach(function (r, i) {
-    ["A","B"].forEach(function (t) {
-      var r = [i + 1, '"' + S.names[t].replace(/"/g, '""') + '"', r.wentOut === t ? "yes" : "no"];
-      RANKS.forEach(function (rk) {
-        var c = r[t].books[rk];
-        r.push(c.nat, c.jok, c.two, bookState(c, S.rules));
-      });
-      LEFT_ROWS.forEach(function (l) { row.push(r[t].left[l.key]); });
-      r.push(scoreTeam(r, t, S.rules).total);
-      rows.push(r.join(","));
+    var overlay = document.getElementById('confirm-overlay');
+    var cancelBtn = document.getElementById('confirm-cancel');
+    var okBtn = document.getElementById('confirm-ok');
+    if (cancelBtn) cancelBtn.addEventListener('click', closeResetConfirm);
+    if (okBtn) okBtn.addEventListener('click', function () {
+      closeResetConfirm();
+      commit(defaultState());
     });
-  });
-  download("nine-decks-" + new Date().toISOString().slice(0, 10) + ".csv", rows.join("\n"), "text/csv");
-}
-
-/* ---------- tabs ---------- */
-function showPanel(name) {
-  L.tab = name; saveLocal();
-  ["round","history","setup"].forEach(function (p) {
-    $("panel-" + p).classList.toggle("on", p === name);
-    $("tab-" + p).setAttribute("aria-selected", p === name ? "true" : "false");
-  });
-  document.querySelector(".tally").style.display = (name === "round") ? "" : "none";
-  window.scrollTo(0, 0);
-}
-
-function renderAll() { renderRound(); renderHistory(); renderSetup(); renderWhoami(); }
-
-/* ---------- wiring ---------- */
-Array.prototype.forEach.call(document.querySelectorAll(".tab"), function (t) {
-  t.onclick = function () { showPanel(t.dataset.panel); };
-});
-$("nameA").oninput = function () { S.names.A = this.value || "Team 1"; save("shared.names"); renderRound(); renderHistory(); };
-$("nameB").oninput = function () { S.names.B = this.value || "Team 2"; save("shared.names"); renderRound(); renderHistory(); };
-$("expjson").onclick = function () {
-  download("nine-decks-backup-" + new Date().toISOString().slice(0, 10) + ".json", JSON.stringify(S, null, 2), "application/json");
-};
-$("expcsv").onclick = exportCsv;
-$("impbtn").onclick = function () { $("impfile").click(); };
-$("impfile").onchange = function () {
-  var f = this.files && this.files[0];
-  if (!f) return;
-  var fr = new FileReader();
-  fr.onload = function () {
+    if (overlay) {
+      overlay.addEventListener('click', function (ev) {
+        if (ev.target === overlay) closeResetConfirm();
+      });
+    }
     try {
-      var incoming = JSON.parse(fr.result);
-      if (!incoming || !Array.isArray(incoming.rounds)) throw new Error("shape");
-      ask("Restore this backup?", "Everything currently on this device is replaced by the file's " +
-        incoming.rounds.length + " saved round" + (incoming.rounds.length === 1 ? "" : "s") + ".",
-        "Restore", function () {
-          store.set(KEY, JSON.stringify(incoming));
-          S = load(); renderAll(); showPanel("history"); toast("Backup restored");
-        });
-    } catch (e) { toast("That file isn't a 9 Deck backup"); }
-  };
-  fr.readAsText(f);
-  this.value = "";
-};
-$("newgame").onclick = function () {
-  ask("Start a new game?", "All saved rounds are cleared. Team names and scoring rules stay as they are. Export a backup first if you want to keep this game.",
-    "Clear and start over", function () {
-      S.rounds = []; S.current = blankRound(); S.view = "A";
-      save(); renderAll(); showPanel("round"); toast("New game started");
-    });
-};
+      document.addEventListener('keydown', function (ev) {
+        if (ev.key === 'Escape') closeResetConfirm();
+      });
+    } catch (e) {}
+  }
 
-$("resync").onclick = function () { sync.reconnect(); toast("Reconnecting"); };
+  function init() {
+    appEl = document.getElementById('app');
+    var styleTag = document.getElementById('style-tag');
+    if (styleTag && !styleTag.textContent) styleTag.textContent = CSS_TEXT;
+    render();
+    wireFooter();
+  }
 
-renderAll();
-showPanel(L.tab || "round");
-sync.start();
+  init();
 
-/* Lets the app open with no network at all. Needs a secure context, so it does
-   nothing over file:// or inside a sandboxed preview - that is expected. */
-if ("serviceWorker" in navigator &&
-    (location.protocol === "https:" || location.hostname === "localhost")) {
-  window.addEventListener("load", function () {
-    navigator.serviceWorker.register("sw.js").catch(function () {});
-  });
-}
+  // Exposed so the module-type Firebase bootstrap script (which must live in
+  // its own <script type="module"> tag to use import syntax) can hand the
+  // initialized Firestore pieces back into this plain script once ready.
+  window.__startFirestoreSync = startFirestoreSync;
+  window.__onFirestoreError = function () { updateSyncFlag('error'); };
+})();
+
 </script>
-</body>
-</html>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+  import {
+    initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
+    doc, onSnapshot, setDoc
+  } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+
+  var firebaseConfig = {"apiKey": "AIzaSyDpXJggaG4I_5KHWKOhoSpmprJvqIFRDD0", "authDomain": "grocery-list-a8d3d.firebaseapp.com", "projectId": "grocery-list-a8d3d", "storageBucket": "grocery-list-a8d3d.firebasestorage.app", "messagingSenderId": "795599791358", "appId": "1:795599791358:web:3de30ddcfda75c8fc2b1af", "measurementId": "G-1VFB7F5NSY"};
+  var listDocPath = "shopping-list/main";
+
+  var app = initializeApp(firebaseConfig);
+  var db;
+  try {
+    db = initializeFirestore(app, { localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }) });
+  } catch (e) {
+    // Falls back to in-memory-only cache on browsers without IndexedDB support.
+    db = initializeFirestore(app, {});
+  }
+
+  var parts = listDocPath.split('/');
+  var docRef = doc(db, parts[0], parts[1]);
+
+  function boot() {
+    window.__startFirestoreSync(app, { db: db, docRef: docRef, onSnapshot: onSnapshot, setDoc: setDoc });
+  }
+  if (window.__startFirestoreSync) { boot(); }
+  else { window.addEventListener('DOMContentLoaded', boot); }
+</script>
+</body></html>
